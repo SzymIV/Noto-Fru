@@ -16,7 +16,8 @@ public class PlanerAplikacja
             Console.WriteLine("1. Dodaj kalendarz");
             Console.WriteLine("2. Pokaż kalendarze");
             Console.WriteLine("3. Otwórz kalendarz");
-            Console.WriteLine("4. Wyjdź");
+            Console.WriteLine("4. Kalendarz");
+            Console.WriteLine("5. Wyjdź");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -36,6 +37,10 @@ public class PlanerAplikacja
                     break;
 
                 case "4":
+                    WyswietlMiesiac();
+                    break;
+
+                case "5":
                     dziala = false;
                     break;
 
@@ -107,8 +112,10 @@ public class PlanerAplikacja
             Console.WriteLine();
             Console.WriteLine($"=== {kalendarz.PobierzTytul()} ===");
             Console.WriteLine("1. Dodaj dzień");
-            Console.WriteLine("2. Pokaż dni");
-            Console.WriteLine("3. Powrót");
+            Console.WriteLine("2. Usuń dzień");
+            Console.WriteLine("3. Pokaż dni (lista)");
+            Console.WriteLine("4. Pokaż widok miesiąca");
+            Console.WriteLine("5. Powrót");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -120,10 +127,18 @@ public class PlanerAplikacja
                     break;
 
                 case "2":
-                    kalendarz.PokazDni();
+                    UsuwanieDnia(kalendarz);
                     break;
 
                 case "3":
+                    kalendarz.PokazDni();
+                    break;
+
+                case "4":
+                    WyswietlMiesiacWKalendarzu(kalendarz);
+                    break;
+
+                case "5":
                     dziala = false;
                     break;
 
@@ -134,9 +149,42 @@ public class PlanerAplikacja
         }
     }
 
+    private void UsuwanieDnia(Kalendarz kalendarz)
+    {
+        kalendarz.PokazDni();
+
+        if (kalendarz.PobierzLiczbeDni() == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            Console.Write("Wybierz numer dnia do usunięcia: ");
+            int numer = int.Parse(Console.ReadLine());
+
+            if (kalendarz.UsunDzien(numer))
+            {
+                Console.WriteLine("Dzień został usunięty.");
+            }
+            else
+            {
+                Console.WriteLine("Niepoprawny numer dnia.");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
+        }
+    }
+
     private void DodajDzien(Kalendarz kalendarz)
     {
-        Console.Write("Podaj datę (rrrr-mm-dd): ");
+        Console.Write("Podaj datę (dd-mm-rrrr): ");
 
         DateTime data = DateTime.Parse(Console.ReadLine());
 
@@ -146,4 +194,61 @@ public class PlanerAplikacja
 
         Console.WriteLine("Dodano dzień!");
     }
+
+    private void WyswietlMiesiacWKalendarzu(Kalendarz kalendarz)
+    {
+        try
+        {
+            Console.Write("Podaj rok: ");
+            int rok = int.Parse(Console.ReadLine());
+
+            Console.Write("Podaj numer miesiąca (1-12): ");
+            int miesiac = int.Parse(Console.ReadLine());
+
+            if (miesiac < 1 || miesiac > 12)
+            {
+                Console.WriteLine("Błąd: Miesiąc musi być liczbą z przedziału od 1 do 12!");
+                return;
+            }
+
+            kalendarz.PokazWidokMiesiaca(rok, miesiac);
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby! Operacja anulowana.");
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
+        }
+    }
+
+    private void WyswietlMiesiac()
+    {
+        try
+        {
+            Console.Write("Podaj rok: ");
+            int rok = int.Parse(Console.ReadLine());
+
+            Console.Write("Podaj numer miesiąca (1-12): ");
+            int miesiac = int.Parse(Console.ReadLine());
+
+            if (miesiac < 1 || miesiac > 12)
+            {
+                Console.WriteLine("Brak takiego miesiąca (wybierz 1-12).");
+                return;
+            }
+
+            Kalendarz.WidokMiesiaca(rok, miesiac);
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
+        }
+    }
 }
+
