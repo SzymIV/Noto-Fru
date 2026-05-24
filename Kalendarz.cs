@@ -12,20 +12,17 @@ public class Kalendarz
         tytulDestynacji = tytul;
     }
 
-    public string PobierzTytul()
-    {
-        return tytulDestynacji;
-    }
+    public string tytulDestynacji => tytulDestynacji;
 
-    public void DodajDzien(Dzien dzien)
+    public void AddDay(Dzien dzien)
     {
-        dni.Add(dzien);
+        dni.Add(Dzien);
     }
 
     public void PokazDni()
     {
         Console.WriteLine();
-        Console.WriteLine("=== DNI ===");
+        Console.WriteLine("=== dni ===");
 
         if (dni.Count == 0)
         {
