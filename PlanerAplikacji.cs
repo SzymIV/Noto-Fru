@@ -72,7 +72,7 @@ public class PlanerAplikacja
 
         for (int i = 0; i < kalendarze.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {kalendarze[i].PobierzTytul()}");
+            Console.WriteLine($"{i + 1}. {kalendarze[i].TytulDestynacji()}");
         }
     }
 

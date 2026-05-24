@@ -12,11 +12,12 @@ public class Kalendarz
         tytulDestynacji = tytul;
     }
 
-    public string tytulDestynacji => tytulDestynacji;
+    public string TytulDestynacji() => tytulDestynacji;
+    public string PobierzTytul() => tytulDestynacji;
 
-    public void AddDay(Dzien dzien)
+    public void DodajDzien(Dzien dzien)
     {
-        dni.Add(Dzien);
+        dni.Add(dzien);
     }
 
     public void PokazDni()
