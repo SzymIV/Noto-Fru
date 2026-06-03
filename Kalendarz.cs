@@ -64,7 +64,6 @@ public class Kalendarz
 
         Console.WriteLine($"\n=== {pierwszyDzien.ToString("MMMM yyyy").ToUpper()} ===");
 
-        // ZMIANA 1: Nagłówek sformatowany idealnie co 4 znaki - żeby zachować spójność z szerokością dni
         Console.WriteLine("  Pn  Wt  Śr  Cz  Pt  Sb  Nd");
 
         int dzienTygodnia = (int)pierwszyDzien.DayOfWeek;
@@ -82,12 +81,10 @@ public class Kalendarz
 
             if (czyMamyTenDzien)
             {
-                // ZMIANA 2: Szerokość formatowania zmieniona z 3 na 4
                 Console.Write($"{dzien + "*",4}");
             }
             else
             {
-                // ZMIANA 3: Szerokość formatowania zmieniona z 3 na 4
                 Console.Write($"{dzien,4}");
             }
 
