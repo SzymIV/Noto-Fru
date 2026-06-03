@@ -63,14 +63,16 @@ public class Kalendarz
         int dniWMiesiacu = DateTime.DaysInMonth(rok, miesiac);
 
         Console.WriteLine($"\n=== {pierwszyDzien.ToString("MMMM yyyy").ToUpper()} ===");
-        Console.WriteLine(" Pn  Wt  Śr  Cz  Pt  Sb  Nd");
+
+        // ZMIANA 1: Nagłówek sformatowany idealnie co 4 znaki (np. "  Pn")
+        Console.WriteLine("  Pn  Wt  Śr  Cz  Pt  Sb  Nd");
 
         int dzienTygodnia = (int)pierwszyDzien.DayOfWeek;
         int przesuniecie = dzienTygodnia == 0 ? 6 : dzienTygodnia - 1;
 
         for (int i = 0; i < przesuniecie; i++)
         {
-            Console.Write("    ");
+            Console.Write("    "); // 4 spacje dla pustych dni pozostają bez zmian
         }
 
         for (int dzien = 1; dzien <= dniWMiesiacu; dzien++)
@@ -80,11 +82,13 @@ public class Kalendarz
 
             if (czyMamyTenDzien)
             {
-                Console.Write($"{dzien + "*",3}");
+                // ZMIANA 2: Szerokość formatowania zmieniona z 3 na 4
+                Console.Write($"{dzien + "*",4}");
             }
             else
             {
-                Console.Write($"{dzien,3}");
+                // ZMIANA 3: Szerokość formatowania zmieniona z 3 na 4
+                Console.Write($"{dzien,4}");
             }
 
             if ((dzien + przesuniecie) % 7 == 0 || dzien == dniWMiesiacu)
