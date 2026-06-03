@@ -64,7 +64,7 @@ public class Kalendarz
 
         Console.WriteLine($"\n=== {pierwszyDzien.ToString("MMMM yyyy").ToUpper()} ===");
 
-        // ZMIANA 1: Nagłówek sformatowany idealnie co 4 znaki (np. "  Pn")
+        // ZMIANA 1: Nagłówek sformatowany idealnie co 4 znaki - żeby zachować spójność z szerokością dni
         Console.WriteLine("  Pn  Wt  Śr  Cz  Pt  Sb  Nd");
 
         int dzienTygodnia = (int)pierwszyDzien.DayOfWeek;
@@ -72,7 +72,7 @@ public class Kalendarz
 
         for (int i = 0; i < przesuniecie; i++)
         {
-            Console.Write("    "); // 4 spacje dla pustych dni pozostają bez zmian
+            Console.Write("    ");
         }
 
         for (int dzien = 1; dzien <= dniWMiesiacu; dzien++)
