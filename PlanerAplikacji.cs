@@ -27,23 +27,18 @@ public class PlanerAplikacja
                 case "1":
                     DodajKalendarz();
                     break;
-
                 case "2":
                     PokazKalendarze();
                     break;
-
                 case "3":
                     OtworzKalendarz();
                     break;
-
                 case "4":
                     WyswietlMiesiac();
                     break;
-
                 case "5":
                     dziala = false;
                     break;
-
                 default:
                     Console.WriteLine("Niepoprawna opcja!");
                     break;
@@ -54,13 +49,9 @@ public class PlanerAplikacja
     private void DodajKalendarz()
     {
         Console.Write("Podaj nazwę kalendarza: ");
-
         string nazwa = Console.ReadLine();
-
         Kalendarz nowy = new Kalendarz(nazwa);
-
         kalendarze.Add(nowy);
-
         Console.WriteLine("Dodano kalendarz!");
     }
 
@@ -89,7 +80,6 @@ public class PlanerAplikacja
             return;
 
         Console.Write("Wybierz numer kalendarza: ");
-
         int numer = int.Parse(Console.ReadLine());
 
         if (numer < 1 || numer > kalendarze.Count)
@@ -99,7 +89,6 @@ public class PlanerAplikacja
         }
 
         Kalendarz wybrany = kalendarze[numer - 1];
-
         MenuKalendarza(wybrany);
     }
 
@@ -125,23 +114,18 @@ public class PlanerAplikacja
                 case "1":
                     DodajDzien(kalendarz);
                     break;
-
                 case "2":
                     UsuwanieDnia(kalendarz);
                     break;
-
                 case "3":
-                    kalendarz.PokazDni();
+                    WyswietlDniWKalendarzu(kalendarz);
                     break;
-
                 case "4":
                     WyswietlMiesiacWKalendarzu(kalendarz);
                     break;
-
                 case "5":
                     dziala = false;
                     break;
-
                 default:
                     Console.WriteLine("Niepoprawna opcja!");
                     break;
@@ -149,9 +133,30 @@ public class PlanerAplikacja
         }
     }
 
+    private void WyswietlDniWKalendarzu(Kalendarz kalendarz)
+    {
+        Console.WriteLine();
+        Console.WriteLine("=== dni ===");
+
+        List<string> dniDoWyswietlenia = kalendarz.PobierzSformatowaneDni();
+
+        if (dniDoWyswietlenia.Count == 0)
+        {
+            Console.WriteLine("Brak dni.");
+            return;
+        }
+
+        for (int i = 0; i < dniDoWyswietlenia.Count; i++)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(dniDoWyswietlenia[i]);
+            Console.ResetColor();
+        }
+    }
+
     private void UsuwanieDnia(Kalendarz kalendarz)
     {
-        kalendarz.PokazDni();
+        WyswietlDniWKalendarzu(kalendarz);
 
         if (kalendarz.PobierzLiczbeDni() == 0)
         {
@@ -185,13 +190,9 @@ public class PlanerAplikacja
     private void DodajDzien(Kalendarz kalendarz)
     {
         Console.Write("Podaj datę (dd-mm-rrrr): ");
-
         DateTime data = DateTime.Parse(Console.ReadLine());
-
         Dzien dzien = new Dzien(data);
-
         kalendarz.DodajDzien(dzien);
-
         Console.WriteLine("Dodano dzień!");
     }
 
@@ -211,7 +212,7 @@ public class PlanerAplikacja
                 return;
             }
 
-            kalendarz.PokazWidokMiesiaca(rok, miesiac);
+            kalendarz.PokazWidokTrzechMiesiecy(rok, miesiac);
         }
         catch (FormatException)
         {
@@ -239,7 +240,13 @@ public class PlanerAplikacja
                 return;
             }
 
-            Kalendarz.WidokMiesiaca(rok, miesiac);
+            DateTime wybranaData = new DateTime(rok, miesiac, 1);
+            DateTime poprzedniaData = wybranaData.AddMonths(-1);
+            DateTime nastepnaData = wybranaData.AddMonths(1);
+
+            Kalendarz.RysujKalendarz(poprzedniaData.Year, poprzedniaData.Month);
+            Kalendarz.RysujKalendarz(wybranaData.Year, wybranaData.Month);
+            Kalendarz.RysujKalendarz(nastepnaData.Year, nastepnaData.Month);
         }
         catch (FormatException)
         {
@@ -251,4 +258,3 @@ public class PlanerAplikacja
         }
     }
 }
-

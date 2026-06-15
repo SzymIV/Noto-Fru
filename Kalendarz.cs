@@ -11,8 +11,15 @@ public class Kalendarz
         tytulDestynacji = tytul;
     }
 
-    public string TytulDestynacji() => tytulDestynacji;
-    public string PobierzTytul() => tytulDestynacji;
+    public string TytulDestynacji()
+    {
+        return tytulDestynacji;
+    }
+
+    public string PobierzTytul()
+    {
+        return tytulDestynacji;
+    }
 
     public void DodajDzien(Dzien dzien)
     {
@@ -35,36 +42,36 @@ public class Kalendarz
         return dni.Count;
     }
 
-    public void PokazDni()
+    public List<string> PobierzSformatowaneDni()
     {
-        Console.WriteLine();
-        Console.WriteLine("=== dni ===");
-
-        if (dni.Count == 0)
-        {
-            Console.WriteLine("Brak dni.");
-            return;
-        }
+        List<string> sformatowaneDni = new List<string>();
 
         for (int i = 0; i < dni.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {dni[i].Data.ToShortDateString()}");
+            sformatowaneDni.Add($"{i + 1}. {dni[i].Data.ToShortDateString()}");
         }
+
+        return sformatowaneDni;
     }
 
-    public void PokazWidokMiesiaca(int rok, int miesiac)
+    public void PokazWidokTrzechMiesiecy(int rok, int miesiac)
     {
-        WidokMiesiaca(rok, miesiac, this.dni);
+        DateTime wybranaData = new DateTime(rok, miesiac, 1);
+        DateTime poprzedniaData = wybranaData.AddMonths(-1);
+        DateTime nastepnaData = wybranaData.AddMonths(1);
+
+        RysujKalendarz(poprzedniaData.Year, poprzedniaData.Month, this.dni);
+        RysujKalendarz(wybranaData.Year, wybranaData.Month, this.dni);
+        RysujKalendarz(nastepnaData.Year, nastepnaData.Month, this.dni);
     }
 
-    public static void WidokMiesiaca(int rok, int miesiac, List<Dzien> listaDni = null)
+    public static void RysujKalendarz(int rok, int miesiac, List<Dzien> listaDni = null)
     {
         DateTime pierwszyDzien = new DateTime(rok, miesiac, 1);
         int dniWMiesiacu = DateTime.DaysInMonth(rok, miesiac);
 
         Console.WriteLine($"\n=== {pierwszyDzien.ToString("MMMM yyyy").ToUpper()} ===");
-
-        Console.WriteLine("  Pn  Wt  Śr  Cz  Pt  Sb  Nd");
+        Console.WriteLine($"{"Pn",4}{"Wt",4}{"Sr",4}{"Cz",4}{"Pt",4}{"Sb",4}{"Nd",4}");
 
         int dzienTygodnia = (int)pierwszyDzien.DayOfWeek;
         int przesuniecie = dzienTygodnia == 0 ? 6 : dzienTygodnia - 1;
@@ -81,11 +88,13 @@ public class Kalendarz
 
             if (czyMamyTenDzien)
             {
-                Console.Write($"{dzien + "*",4}");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{dzien,3} ");
+                Console.ResetColor();
             }
             else
             {
-                Console.Write($"{dzien,4}");
+                Console.Write($"{dzien,3} ");
             }
 
             if ((dzien + przesuniecie) % 7 == 0 || dzien == dniWMiesiacu)
@@ -93,6 +102,5 @@ public class Kalendarz
                 Console.WriteLine();
             }
         }
-        Console.WriteLine();
     }
 }
