@@ -35,6 +35,14 @@ public class Kalendarz
         return dni.Count;
     }
 
+public Dzien PobierzDzien(int indeks)
+    {
+        if (indeks < 1 || indeks > dni.Count)
+        {
+            return null;
+        }
+        return dni[indeks - 1];
+    }
     public void PokazDni()
     {
         Console.WriteLine();
