@@ -22,7 +22,6 @@ public class Przejazd : Aktywnosc
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Przejazd: {srodekTransportu}");
-        Console.WriteLine($"{stacjaPoczatkowa} -> {stacjaKoncowa}");
+    Console.WriteLine($"PRZEJAZD | {srodekTransportu}: {stacjaPoczatkowa} -> {stacjaKoncowa} - {opis}");
     }
 }

@@ -19,7 +19,7 @@ public class Zwiedzanie : Aktywnosc
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Zwiedzanie: {nazwaAtrakcji}");
-        Console.WriteLine($"Biletowane: {czyBiletowane}");
+    string biletInfo = czyBiletowane ? "Bilet" : "Brak biletu";
+    Console.WriteLine($"ZWIEDZANIE | {nazwaAtrakcji} ({biletInfo}) - {opis}");
     }
 }

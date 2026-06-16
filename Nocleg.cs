@@ -19,7 +19,6 @@ public class Nocleg : Aktywnosc
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Nocleg: {nazwaObiektu}");
-        Console.WriteLine($"Adres: {adres}");
+    Console.WriteLine($"NOCLEG | {nazwaObiektu} ({adres}) - {opis}");
     }
 }
