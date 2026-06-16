@@ -23,9 +23,20 @@ public class Dzien
     }
 
     public void UsunAktywnosc(int id)
+{
+    Aktywnosc? doUsuniecia = aktywnosci.Find(akt => 
+        id >= akt.CzasStart.Hour && id < akt.CzasKoniec.Hour);
+
+    if (doUsuniecia != null)
     {
-        Console.WriteLine("Usuwanie aktywności...");
+        aktywnosci.Remove(doUsuniecia);
+        Console.WriteLine($"Sukces: Usunięto aktywność z godziny {id:D2}.00.");
     }
+    else
+    {
+        Console.WriteLine($"Błąd: Brak aktywności w godzinie {id:D2}.00.");
+    }
+}
 
     public bool SprawdzKonfliktyCzasowe(DateTime start, DateTime koniec)
     {
