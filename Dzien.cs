@@ -112,7 +112,41 @@ public class Dzien
     }
     public void UsunAktywnosc(int id)
     {
-        Console.WriteLine($"Wybierz numer aktywności do usunięcia: ");
+      try
+        {
+            Console.WriteLine($"\n===Usuwanie aktywnosci z dnia: {Data.ToShortDateString()}===");
+
+            if (aktywnosci.Count == 0)
+            {
+                Console.WriteLine("Nie ma aktywności do usunięcia.");
+                return;
+            }
+
+            Console.Write("Podaj numer aktywności, którą chcesz usunąć: ");
+            int wybranyId = int.Parse(Console.ReadLine());
+
+            Aktywnosc doUsuniecia = aktywnosci.Find(a => a.id == wybranyId);
+
+            if (doUsuniecia != null)
+            {
+                aktywnosci.Remove(doUsuniecia);
+
+                for (int i = 0; i < aktywnosci.Count; i++)
+                {
+                    aktywnosci[i].id = i + 1;
+                }
+
+                Console.WriteLine($"Aktywność została usunięta.");
+            }
+            else
+            {
+                Console.WriteLine($"Nie znaleziono aktywności");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Musisz podać liczbę jako numer aktywności!");
+        }
     }
 
     public bool SprawdzKonfliktyCzasowe(DateTime start, DateTime koniec)
