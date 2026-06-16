@@ -42,11 +42,24 @@ public class Dzien
 
     public void WyswietlWidokDnia()
     {
-        Console.WriteLine($"Dzień: {Data.ToShortDateString()}");
+        Console.WriteLine($"\n=== WIDOK SZCZEGÓŁOWY DNIA: {Data.ToShortDateString()} ===");
 
-        foreach (var akt in aktywnosci)
+    for (int godzina = 0; godzina < 24; godzina++)
+    {
+        Aktywnosc znaleziona = aktywnosci.Find(akt => 
+            godzina >= akt.CzasStart.Hour && godzina < akt.CzasKoniec.Hour);
+
+        string godzinaStr = $"{godzina:D2}.00";
+
+        if (znaleziona != null)
         {
-            akt.WyswietlSzczegoly();
+            Console.Write($"   {godzinaStr}    | ");
+            znaleziona.WyswietlSzczegoly();
         }
+        else
+        {
+            Console.WriteLine($"   {godzinaStr}    | ");
+        }
+    }
     }
 }
