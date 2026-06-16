@@ -2,9 +2,11 @@ using System;
 
 public class Przejazd : Aktywnosc
 {
-    private string srodekTransportu;
-    private string stacjaPoczatkowa;
-    private string stacjaKoncowa;
+        public string SrodekTransportu { get; set; }
+        public string StacjaPoczatkowa { get; set; }
+        public string StacjaKoncowa { get; set; }
+
+        public Przejazd() { }
 
     public Przejazd(
         DateTime start,
@@ -15,14 +17,14 @@ public class Przejazd : Aktywnosc
         string koniecStacja
     ) : base(start, koniec, opis)
     {
-        srodekTransportu = transport;
-        stacjaPoczatkowa = startStacja;
-        stacjaKoncowa = koniecStacja;
+        SrodekTransportu = transport;
+        StacjaPoczatkowa = startStacja;
+        StacjaKoncowa = koniecStacja;
     }
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Przejazd: {srodekTransportu}");
-        Console.WriteLine($"{stacjaPoczatkowa} -> {stacjaKoncowa}");
+        Console.WriteLine($"Przejazd: {SrodekTransportu}");
+        Console.WriteLine($"{StacjaPoczatkowa} -> {StacjaKoncowa}");
     }
 }

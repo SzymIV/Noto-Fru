@@ -5,8 +5,10 @@ public class Dzien
 {
     public DateTime Data { get; set; }
 
-    private List<Aktywnosc> aktywnosci = new List<Aktywnosc>();
+    public List<Aktywnosc> Aktywnosci { get; set; } = new List<Aktywnosc>();
 
+    public Dzien() { }
+    
     public Dzien(DateTime data)
     {
         Data = data;
@@ -14,7 +16,7 @@ public class Dzien
 
     public void DodajAktywnosc(Aktywnosc akt)
     {
-        aktywnosci.Add(akt);
+        Aktywnosci.Add(akt);
     }
 
     public void EdytujAktywnosc(int id)
@@ -29,7 +31,7 @@ public class Dzien
 
     public bool SprawdzKonfliktyCzasowe(DateTime start, DateTime koniec)
     {
-        foreach (var akt in aktywnosci)
+        foreach (var akt in Aktywnosci)
         {
             if (start < akt.CzasKoniec && koniec > akt.CzasStart)
             {
@@ -44,7 +46,7 @@ public class Dzien
     {
         Console.WriteLine($"Dzień: {Data.ToShortDateString()}");
 
-        foreach (var akt in aktywnosci)
+        foreach (var akt in Aktywnosci)
         {
             akt.WyswietlSzczegoly();
         }

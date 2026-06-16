@@ -2,24 +2,21 @@ using System;
 
 public class Nocleg : Aktywnosc
 {
-    private string nazwaObiektu;
-    private string adres;
+    public string NazwaObiektu { get; set; }
+    public string Adres { get; set; }
 
-    public Nocleg(
-        DateTime start,
-        DateTime koniec,
-        string opis,
-        string nazwaObiektu,
-        string adres
-    ) : base(start, koniec, opis)
+    public Nocleg() { }
+
+    public Nocleg(DateTime start, DateTime koniec, string opis, string nazwaObiektu, string adres) 
+        : base(start, koniec, opis)
     {
-        this.nazwaObiektu = nazwaObiektu;
-        this.adres = adres;
+        NazwaObiektu = nazwaObiektu;
+        Adres = adres;
     }
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Nocleg: {nazwaObiektu}");
-        Console.WriteLine($"Adres: {adres}");
+        Console.WriteLine($"Nocleg: {NazwaObiektu}");
+        Console.WriteLine($"Adres: {Adres}");
     }
 }

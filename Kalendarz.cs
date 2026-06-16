@@ -3,52 +3,54 @@ using System.Collections.Generic;
 
 public class Kalendarz
 {
-    private string tytulDestynacji;
-    private List<Dzien> dni = new List<Dzien>();
+    public string Tytul { get; set; } 
+    public List<Dzien> Dni { get; set; } = new List<Dzien>();
+
+    public Kalendarz() { }
 
     public Kalendarz(string tytul)
     {
-        tytulDestynacji = tytul;
+        Tytul = tytul;
     }
 
     public string TytulDestynacji()
     {
-        return tytulDestynacji;
+        return Tytul;
     }
 
     public string PobierzTytul()
     {
-        return tytulDestynacji;
+        return Tytul;
     }
 
     public void DodajDzien(Dzien dzien)
     {
-        dni.Add(dzien);
+        Dni.Add(dzien);
     }
 
     public bool UsunDzien(int indeks)
     {
-        if (indeks < 1 || indeks > dni.Count)
+        if (indeks < 1 || indeks > Dni.Count)
         {
             return false;
         }
 
-        dni.RemoveAt(indeks - 1);
+        Dni.RemoveAt(indeks - 1);
         return true;
     }
 
     public int PobierzLiczbeDni()
     {
-        return dni.Count;
+        return Dni.Count;
     }
 
     public List<string> PobierzSformatowaneDni()
     {
         List<string> sformatowaneDni = new List<string>();
 
-        for (int i = 0; i < dni.Count; i++)
+        for (int i = 0; i < Dni.Count; i++)
         {
-            sformatowaneDni.Add($"{i + 1}. {dni[i].Data.ToShortDateString()}");
+            sformatowaneDni.Add($"{i + 1}. {Dni[i].Data.ToShortDateString()}");
         }
 
         return sformatowaneDni;
@@ -60,9 +62,9 @@ public class Kalendarz
         DateTime poprzedniaData = wybranaData.AddMonths(-1);
         DateTime nastepnaData = wybranaData.AddMonths(1);
 
-        RysujKalendarz(poprzedniaData.Year, poprzedniaData.Month, this.dni);
-        RysujKalendarz(wybranaData.Year, wybranaData.Month, this.dni);
-        RysujKalendarz(nastepnaData.Year, nastepnaData.Month, this.dni);
+        RysujKalendarz(poprzedniaData.Year, poprzedniaData.Month, this.Dni);
+        RysujKalendarz(wybranaData.Year, wybranaData.Month, this.Dni);
+        RysujKalendarz(nastepnaData.Year, nastepnaData.Month, this.Dni);
     }
 
     public static void RysujKalendarz(int rok, int miesiac, List<Dzien> listaDni = null)

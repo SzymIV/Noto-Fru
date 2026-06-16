@@ -2,8 +2,8 @@ using System;
 
 public class Zwiedzanie : Aktywnosc
 {
-    private string nazwaAtrakcji;
-    private bool czyBiletowane;
+    public string NazwaAtrakcji { get; set; }
+    public bool CzyBiletowane { get; set; }
 
     public Zwiedzanie(
         DateTime start,
@@ -13,13 +13,13 @@ public class Zwiedzanie : Aktywnosc
         bool bilet
     ) : base(start, koniec, opis)
     {
-        nazwaAtrakcji = atrakcja;
-        czyBiletowane = bilet;
+        NazwaAtrakcji = atrakcja;
+        CzyBiletowane = bilet;
     }
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Zwiedzanie: {nazwaAtrakcji}");
-        Console.WriteLine($"Biletowane: {czyBiletowane}");
+        Console.WriteLine($"Zwiedzanie: {NazwaAtrakcji}");
+        Console.WriteLine($"Biletowane: {CzyBiletowane}");
     }
 }

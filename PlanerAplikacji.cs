@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
 public class PlanerAplikacja
 {
@@ -8,16 +10,20 @@ public class PlanerAplikacja
     public void UruchomMenuGlowne()
     {
         bool dziala = true;
+        string domyslnaSciezka = "mojekalendarze.json";
 
         while (dziala)
+
         {
             Console.WriteLine();
             Console.WriteLine("=== PLANER PODRÓŻY ===");
             Console.WriteLine("1. Dodaj kalendarz");
             Console.WriteLine("2. Pokaż kalendarze");
             Console.WriteLine("3. Otwórz kalendarz");
-            Console.WriteLine("4. Kalendarz");
-            Console.WriteLine("5. Wyjdź");
+            Console.WriteLine("4. Kalendarz (widok miesięcy)");
+            Console.WriteLine("5. Zapisz dane do pliku");
+            Console.WriteLine("6. Wczytaj dane z pliku");
+            Console.WriteLine("7. Wyjdź");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -37,6 +43,12 @@ public class PlanerAplikacja
                     WyswietlMiesiac();
                     break;
                 case "5":
+                    ZapiszDoPliku(domyslnaSciezka);
+                    break;
+                case "6":
+                    WczytajZPliku(domyslnaSciezka);
+                    break;
+                case "7":
                     dziala = false;
                     break;
                 default:
@@ -45,6 +57,7 @@ public class PlanerAplikacja
             }
         }
     }
+
 
     private void DodajKalendarz()
     {
@@ -257,4 +270,45 @@ public class PlanerAplikacja
             Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
         }
     }
+
+
+    public void ZapiszDoPliku(string sciezka)
+{
+    try
+    {
+        var opcje = new JsonSerializerOptions { WriteIndented = true };
+        string json = JsonSerializer.Serialize(kalendarze, opcje);
+        
+        File.WriteAllText(sciezka, json);
+        Console.WriteLine($"Pomyślnie zapisano dane do pliku: {sciezka}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Wystąpił błąd podczas zapisywania: {ex.Message}");
+    }
+}
+
+public void WczytajZPliku(string sciezka)
+{
+    try
+    {
+        if (File.Exists(sciezka))
+        {
+            string json = File.ReadAllText(sciezka);
+            kalendarze = JsonSerializer.Deserialize<List<Kalendarz>>(json) ?? new List<Kalendarz>();
+            Console.WriteLine($"Pomyślnie wczytano dane z pliku: {sciezka}");
+        }
+        else
+        {
+            Console.WriteLine("Podany plik nie istnieje.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Wystąpił błąd podczas wczytywania: {ex.Message}");
+    }
+}
+
+
+
 }

@@ -1,24 +1,29 @@
 using System;
+using System.Text.Json.Serialization;
 
+
+[JsonDerivedType(typeof(Nocleg), typeDiscriminator: "Nocleg")]
+[JsonDerivedType(typeof(Przejazd), typeDiscriminator: "Przejazd")]
+[JsonDerivedType(typeof(Zwiedzanie), typeDiscriminator: "Zwiedzanie")]
 public abstract class Aktywnosc
 {
-    protected DateTime czasStart;
-    protected DateTime czasKoniec;
-    protected string opis;
 
-    public DateTime CzasStart => czasStart;
-    public DateTime CzasKoniec => czasKoniec;
+    public DateTime CzasStart { get; set; }
+    public DateTime CzasKoniec { get; set; }
+    public string Opis { get; set; }
+
+    public Aktywnosc() { }
 
     public Aktywnosc(DateTime start, DateTime koniec, string opis)
     {
-        this.czasStart = start;
-        this.czasKoniec = koniec;
-        this.opis = opis;
+        CzasStart = start;
+        CzasKoniec = koniec;
+        Opis = opis;
     }
 
     public TimeSpan PobierzCzasTrwania()
     {
-        return czasKoniec - czasStart;
+        return CzasKoniec - CzasStart;
     }
 
     public abstract void WyswietlSzczegoly();
