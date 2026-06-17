@@ -90,17 +90,7 @@ public class PlanerAplikacja
             return;
 
         Console.Write("Wybierz numer kalendarza: ");
-        int numer;
-
-        try
-        {
-            numer = int.Parse(Console.ReadLine());
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
-            return;
-        }
+        string numerInput = PobierzLinie();
 
         if (!int.TryParse(numerInput, out int numer) || numer < 1 || numer > kalendarze.Count)
         {
@@ -223,9 +213,10 @@ public class PlanerAplikacja
     private void DodajDzien(Kalendarz kalendarz)
     {
         Console.Write("Podaj datę (dd-mm-rrrr lub rrrr-mm-dd): ");
+        string dataInput = PobierzLinie();
         try
         {
-            DateTime data = DateTime.Parse(Console.ReadLine());
+            DateTime data = DateTime.Parse(dataInput);
             Dzien dzien = new Dzien(data);
             kalendarz.DodajDzien(dzien);
             Console.WriteLine("Dodano dzień!");
@@ -241,10 +232,12 @@ public class PlanerAplikacja
         try
         {
             Console.Write("Podaj datę początkową (dd-mm-rrrr lub rrrr-mm-dd): ");
-            DateTime dataPoczatkowa = DateTime.Parse(Console.ReadLine());
+            string dataPoczatkowaInput = PobierzLinie();
+            DateTime dataPoczatkowa = DateTime.Parse(dataPoczatkowaInput);
 
             Console.Write("Ile dni dodać?: ");
-            int liczbaDni = int.Parse(Console.ReadLine());
+            string liczbaDniInput = PobierzLinie();
+            int liczbaDni = int.Parse(liczbaDniInput);
 
             for (int i = 0; i < liczbaDni; i++)
             {
@@ -328,7 +321,7 @@ public class PlanerAplikacja
                 return;
             }
 
-            Dzien wybranyDzien = kalendarz.PobierzDzien(numer); 
+            Dzien? wybranyDzien = kalendarz.PobierzDzien(numer); 
 
             if (wybranyDzien != null)
             {
