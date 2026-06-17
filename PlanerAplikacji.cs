@@ -345,8 +345,8 @@ public class PlanerAplikacja
             // musisz w nawiasach wstawić np. (null) i (0) aby kod się kompilował.
             switch (wybor)
             {
-                case "1": dzien.DodajAktywnosc(null); break; 
-                case "2": dzien.EdytujAktywnosc(0); break; 
+                case "1": dzien.DodajAktywnosc(); break; 
+                case "2": dzien.EdytujAktywnosc(); break; 
                 case "3": dzien.UsunAktywnosc(0); break; 
                 case "4": dziala = false; break;
                 default: Console.WriteLine("Niepoprawna opcja!"); break;
