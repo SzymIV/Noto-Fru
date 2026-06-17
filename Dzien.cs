@@ -14,7 +14,7 @@ public class Dzien
 
     public Dzien() { }
 
-    public void DodajAktywnosc(Aktywnosc akt)
+    public void DodajAktywnosc()
     {
         try
         {
@@ -110,7 +110,7 @@ public class Dzien
             Console.WriteLine("Błąd: Wprowadzono niepoprawny format godziny! Używaj formatu HH:mm (np. 08:15).");
         }
     }
-    public void EdytujAktywnosc(int id)
+    public void EdytujAktywnosc()
     {
        try
         {
@@ -254,7 +254,7 @@ public class Dzien
             Console.WriteLine("Wprowadzono nieprawidłowe dane liczbowe lub błędny format godziny!");
         }
     }
-    public void UsunAktywnosc(int id)
+    public void UsunAktywnosc()
     {
       try
         {
