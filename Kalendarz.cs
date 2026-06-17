@@ -92,4 +92,13 @@ public class Kalendarz
             }
         }
     }
+
+    public Dzien PobierzDzien(int indeks)
+{
+    if (indeks < 1 || indeks > dni.Count)
+    {
+        return null;
+    }
+    return dni[indeks - 1]; // Zwracamy obiekt dnia (indeksowanie od 0)
+}
 }
