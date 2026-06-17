@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
-public class Dzien
+public class Dzien : IComparable<Dzien>
 {
     public DateTime Data { get; set; }
     [JsonInclude]
     private List<Aktywnosc> aktywnosci = new List<Aktywnosc>();
+
     public Dzien(DateTime data)
     {
         Data = data;
@@ -14,319 +16,255 @@ public class Dzien
 
     public Dzien() { }
 
+    public int CompareTo(Dzien? other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+
+        return Data.CompareTo(other.Data);
+    }
+
+    private void SortujIPorządkujId()
+    {
+        aktywnosci.Sort((a, b) => a.CzasStart.CompareTo(b.CzasStart));
+        for (int i = 0; i < aktywnosci.Count; i++)
+        {
+            aktywnosci[i].id = i + 1;
+        }
+    }
+
     public void DodajAktywnosc()
     {
-        try
+        while (true)
         {
-            Console.WriteLine($"\n===Dodawanie Aktywności na dzień: {Data.ToShortDateString()}===");
-            Console.Write("1. Podaj godzinę początku aktywności (format HH:mm, np. 14:30): ");
-            string wpisanyStartInput = PobierzLinie();
-            if (!DateTime.TryParseExact(wpisanyStartInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyStart))
+            if (PobierzLinie("\nWpisz 0, aby zakończyć dodawanie aktywności: ") == "0")
             {
-                Console.WriteLine("Błąd: Niepoprawny format godziny początku!");
-                return;
+                break;
             }
+
+            Console.WriteLine($"\n=== Dodawanie aktywności na dzień: {Data.ToShortDateString()} ===");
+
+            if (!SpróbujPobierzGodzine("1. Podaj godzinę początku aktywności (format HH:mm, np. 14:30): ", out DateTime wpisanyStart))
+            {
+                continue;
+            }
+
+            if (!SpróbujPobierzGodzine("2. Podaj godzinę końca aktywności (format HH:mm, np. 16:00): ", out DateTime wpisanyKoniec))
+            {
+                continue;
+            }
+
             DateTime czasStart = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyStart.Hour, wpisanyStart.Minute, 0);
-            Console.Write("2. Podaj godzinę końca aktywności (format HH:mm, np. 16:00): ");
-            string wpisanyKoniecInput = PobierzLinie();
-            if (!DateTime.TryParseExact(wpisanyKoniecInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyKoniec))
-            {
-                Console.WriteLine("Błąd: Niepoprawny format godziny końca!");
-                return;
-            }
             DateTime czasKoniec = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyKoniec.Hour, wpisanyKoniec.Minute, 0);
 
             if (czasKoniec <= czasStart)
             {
                 Console.WriteLine("Błąd: Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia!");
-                return;
+                continue;
             }
 
             Console.WriteLine("3. Sprawdzanie konfliktów czasowych...");
             if (SprawdzKonfliktyCzasowe(czasStart, czasKoniec))
             {
                 Console.WriteLine("W podanym przedziale czasowym masz już zaplanowaną inną aktywność!");
-                return;
+                continue;
             }
-            Console.WriteLine("\n. Wybierz rodzaj aktywności:");
-            Console.WriteLine("1. Atrakcja");
-            Console.WriteLine("2. Nocleg");
-            Console.WriteLine("3. Przejazd");
-            Console.Write("Twój wybór (1-3): ");
-            string rodzajWybor = PobierzLinie();
 
-            if (rodzajWybor != "1" && rodzajWybor != "2" && rodzajWybor != "3")
+            if (!SpróbujPobierzOpcje("\nWybierz rodzaj aktywności (1. Atrakcja, 2. Nocleg, 3. Przejazd): ", new[] { "1", "2", "3" }, out string rodzajWybor))
             {
-                Console.WriteLine("Wybierz liczbę od 1 do 3");
-                return;
+                continue;
             }
 
-            string opis = "";
-            while (true)
-            {
-                Console.Write("5. Podaj opis aktywności (maksymalnie 15 znaków): ");
-                opis = PobierzLinie();
-
-                if (opis.Length <= 15)
-                {
-                    break;
-                }
-                Console.WriteLine($"Błąd: Twój opis ma {opis.Length} znaków. Maksymalna dozwolona długość to 15 znaków!");
-            }
-
-            Aktywnosc? nowaAktywnosc = null;
-
-            switch (rodzajWybor)
-            {
-                case "1": 
-                    Console.Write("   Podaj nazwę atrakcji: ");
-                    string nazwaAtrakcji = PobierzLinie();
-                    Console.Write("   Czy biletowane? (tak/nie): ");
-                    bool czyBilet = PobierzLinie().Equals("tak", StringComparison.OrdinalIgnoreCase);
-
-                    nowaAktywnosc = new Atrakcja(czasStart, czasKoniec, opis, nazwaAtrakcji, czyBilet);
-                    break;
-
-                case "2": 
-                    Console.Write("   Podaj nazwę obiektu: ");
-                    string nazwaObiektu = PobierzLinie();
-                    Console.Write("   Podaj adres: ");
-                    string adres = PobierzLinie();
-
-                    nowaAktywnosc = new Nocleg(czasStart, czasKoniec, opis, nazwaObiektu, adres);
-                    break;
-
-                case "3":
-                    Console.Write("   Podaj środek transportu: ");
-                    string transport = PobierzLinie();
-                    Console.Write("   Podaj stację początkową: ");
-                    string startStacja = PobierzLinie();
-                    Console.Write("   Podaj stację końcową: ");
-                    string koniecStacja = PobierzLinie();
-
-                    nowaAktywnosc = new Przejazd(czasStart, czasKoniec, opis, transport, startStacja, koniecStacja);
-                    break;
-            }
+            string opis = PobierzTekstOWymiarze("5. Podaj opis aktywności (maksymalnie 15 znaków): ", 15);
+            Aktywnosc? nowaAktywnosc = UtworzAktywnosc(rodzajWybor, czasStart, czasKoniec, opis);
 
             if (nowaAktywnosc != null)
             {
-                nowaAktywnosc.id = aktywnosci.Count + 1;
                 aktywnosci.Add(nowaAktywnosc);
-                Console.WriteLine("Aktywność została pdodana do harmonogramu!");
+                SortujIPorządkujId();
+                Console.WriteLine("Aktywność została dodana do harmonogramu!");
             }
         }
-        catch (FormatException)
+    }
+
+    private Aktywnosc? UtworzAktywnosc(string rodzajWybor, DateTime start, DateTime koniec, string opis)
+    {
+        switch (rodzajWybor)
         {
-            Console.WriteLine("Błąd: Wprowadzono niepoprawny format godziny! Używaj formatu HH:mm (np. 08:15).");
+            case "1":
+                string nazwaAtrakcji = PobierzLinie("   Podaj nazwę atrakcji: ");
+                bool czyBilet = PobierzLinie("   Czy biletowane? (tak/nie): ").Equals("tak", StringComparison.OrdinalIgnoreCase);
+                return new Atrakcja(start, koniec, opis, nazwaAtrakcji, czyBilet);
+
+            case "2":
+                string nazwaObiektu = PobierzLinie("   Podaj nazwę obiektu: ");
+                string adres = PobierzLinie("   Podaj adres: ");
+                return new Nocleg(start, koniec, opis, nazwaObiektu, adres);
+
+            case "3":
+                string transport = PobierzLinie("   Podaj środek transportu: ");
+                string startStacja = PobierzLinie("   Podaj stację początkową: ");
+                string koniecStacja = PobierzLinie("   Podaj stację końcową: ");
+                return new Przejazd(start, koniec, opis, transport, startStacja, koniecStacja);
+
+            default:
+                return null;
         }
     }
+
     public void EdytujAktywnosc()
     {
-       try
+        Console.WriteLine($"\n=== Edycja aktywności w dniu: {Data.ToShortDateString()} ===");
+
+        if (aktywnosci.Count == 0)
         {
-            Console.WriteLine($"\n===Edycja aktywności w dniu: {Data.ToShortDateString()}===");
-
-            if (aktywnosci.Count == 0)
-            {
-                Console.WriteLine("Nie ma aktywności do zmodyfikowania.");
-                return;
-            }
-
-            Console.Write("Podaj numer aktywności, którą chcesz zmodyfikować: ");
-            string wybranyIdInput = PobierzLinie();
-            if (!int.TryParse(wybranyIdInput, out int wybranyId))
-            {
-                Console.WriteLine("Błąd: Musisz podać numer aktywności jako liczbę!");
-                return;
-            }
-
-            Aktywnosc? akt = aktywnosci.Find(a => a.id == wybranyId);
-
-            if (akt == null)
-            {
-                Console.WriteLine($"Nie znaleziono aktywności");
-                return;
-            }
-
-            Console.WriteLine($"\n Edycja aktywnosci: [{akt.id}] {akt.Opis} ({akt.CzasStart:HH:mm}-{akt.CzasKoniec:HH:mm})");
-            Console.WriteLine("Co chcesz zmienić?");
-            Console.WriteLine("1. Przedział czasowy");
-            Console.WriteLine("2. Rodzaj aktywności");
-            Console.WriteLine("3. Opis");
-            Console.Write("Twój wybór (1-3): ");
-            string coZmienic = PobierzLinie();
-
-            switch (coZmienic)
-            {
-                case "1": 
-                    Console.Write("Podaj nową godzinę początku (format HH:mm, np. 09:00): ");
-                    string wpisanyStartNowyInput = PobierzLinie();
-                    if (!DateTime.TryParseExact(wpisanyStartNowyInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyStart))
-                    {
-                        Console.WriteLine("Błąd: Niepoprawny format godziny początku!");
-                        return;
-                    }
-                    DateTime nowyStart = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyStart.Hour, wpisanyStart.Minute, 0);
-
-                    Console.Write("Podaj nową godzinę końca (format HH:mm, np. 11:30): ");
-                    string wpisanyKoniecNowyInput = PobierzLinie();
-                    if (!DateTime.TryParseExact(wpisanyKoniecNowyInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyKoniec))
-                    {
-                        Console.WriteLine("Błąd: Niepoprawny format godziny końca!");
-                        return;
-                    }
-                    DateTime nowyKoniec = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyKoniec.Hour, wpisanyKoniec.Minute, 0);
-
-                    if (nowyKoniec <= nowyStart)
-                    {
-                        Console.WriteLine("Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia!");
-                        return;
-                    }
-
-                    Console.WriteLine("Sprawdzanie konfliktów czasowych...");
-                    if (SprawdzKonfliktyCzasowe(nowyStart, nowyKoniec))
-                    {
-                        Console.WriteLine("Godziny kolidują z inną zaplanowaną aktywnością w tym dniu!");
-                        return;
-                    }
-
-                    akt.CzasStart = nowyStart;
-                    akt.CzasKoniec = nowyKoniec;
-                    break;
-
-                case "2": 
-                    Console.WriteLine("\n Wybierz nowy rodzaj aktywności:");
-                    Console.WriteLine("1. Atrakcja");
-                    Console.WriteLine("2. Nocleg");
-                    Console.WriteLine("3. Przejazd");
-                    Console.Write("Twój wybór (1-3): ");
-                    string nowyRodzaj = PobierzLinie();
-
-                    if (nowyRodzaj != "1" && nowyRodzaj != "2" && nowyRodzaj != "3")
-                    {
-                        Console.WriteLine("Wybierz lidzbe od 1 do 3");
-                        return;
-                    }
-
-                    Aktywnosc? nowoUtworzona = null;
-                    DateTime obecnyStart = akt.CzasStart;
-                    DateTime obecnyKoniec = akt.CzasKoniec;
-                    string obecnyOpis = akt.Opis;
-
-                    switch (nowyRodzaj)
-                    {
-                        case "1":
-                            Console.Write("   Podaj nazwę atrakcji: ");
-                            string nazwaAtrakcji = PobierzLinie();
-                            Console.Write("   Czy biletowane? (tak/nie): ");
-                            bool czyBilet = PobierzLinie().Equals("tak", StringComparison.OrdinalIgnoreCase);
-                            nowoUtworzona = new Atrakcja(obecnyStart, obecnyKoniec, obecnyOpis, nazwaAtrakcji, czyBilet);
-                            break;
-
-                        case "2":
-                            Console.Write("   Podaj nazwę obiektu: ");
-                            string nazwaObiektu = PobierzLinie();
-                            Console.Write("   Podaj adres: ");
-                            string adres = PobierzLinie();
-                            nowoUtworzona = new Nocleg(obecnyStart, obecnyKoniec, obecnyOpis, nazwaObiektu, adres);
-                            break;
-
-                        case "3":
-                            Console.Write("   Podaj środek transportu: ");
-                            string transport = PobierzLinie();
-                            Console.Write("   Podaj stację początkową: ");
-                            string startStacja = PobierzLinie();
-                            Console.Write("   Podaj stację końcową: ");
-                            string koniecStacja = PobierzLinie();
-                            nowoUtworzona = new Przejazd(obecnyStart, obecnyKoniec, obecnyOpis, transport, startStacja, koniecStacja);
-                            break;
-                    }
-
-                    if (nowoUtworzona != null)
-                    {
-                        nowoUtworzona.id = akt.id; 
-                        int indeks = aktywnosci.IndexOf(akt);
-                        aktywnosci[indeks] = nowoUtworzona; 
-                        Console.WriteLine("[Sukces] Rodzaj aktywności i jej specyficzne dane zostały zmienione.");
-                    }
-                    break;
-
-                case "3": 
-                    string nowyOpis = "";
-                    while (true)
-                    {
-                        Console.Write("Podaj nowy opis aktywności (maksymalnie 15 znaków): ");
-                        nowyOpis = PobierzLinie();
-
-                        if (nowyOpis.Length <= 15)
-                        {
-                            break;
-                        }
-                        Console.WriteLine($"Twój opis ma {nowyOpis.Length} znaków. Maksymalna dozwolona długość to 15 znaków!");
-                    }
-
-                    akt.Opis = nowyOpis;
-                    Console.WriteLine("Opis aktywności został zaktualizowany.");
-                    break;
-
-                default:
-                    Console.WriteLine("Niepoprawna opcja menu edycji.");
-                    break;
-            }
+            Console.WriteLine("Nie ma aktywności do zmodyfikowania.");
+            return;
         }
-        catch (FormatException)
+
+        Console.Write("Podaj numer aktywności, którą chcesz zmodyfikować: ");
+        string wybranyIdInput = PobierzLinie();
+        if (!int.TryParse(wybranyIdInput, out int wybranyId))
         {
-            Console.WriteLine("Wprowadzono nieprawidłowe dane liczbowe lub błędny format godziny!");
+            Console.WriteLine("Błąd: Musisz podać numer aktywności jako liczbę!");
+            return;
+        }
+
+        Aktywnosc? akt = aktywnosci.Find(a => a.id == wybranyId);
+        if (akt == null)
+        {
+            Console.WriteLine("Nie znaleziono aktywności.");
+            return;
+        }
+
+        Console.WriteLine($"\nEdycja aktywności: [{akt.id}] {akt.Opis} ({akt.CzasStart:HH:mm}-{akt.CzasKoniec:HH:mm})");
+        Console.WriteLine("Co chcesz zmienić?");
+        Console.WriteLine("1. Przedział czasowy");
+        Console.WriteLine("2. Rodzaj aktywności");
+        Console.WriteLine("3. Opis");
+        Console.Write("Twój wybór (1-3): ");
+        string coZmienic = PobierzLinie();
+
+        switch (coZmienic)
+        {
+            case "1":
+                EdytujPrzedzialCzasowy(akt);
+                break;
+
+            case "2":
+                EdytujRodzajAktywnosci(akt);
+                break;
+
+            case "3":
+                string nowyOpis = PobierzTekstOWymiarze("Podaj nowy opis aktywności (maksymalnie 15 znaków): ", 15);
+                akt.Opis = nowyOpis;
+                Console.WriteLine("Opis aktywności został zaktualizowany.");
+                break;
+
+            default:
+                Console.WriteLine("Niepoprawna opcja menu edycji.");
+                break;
         }
     }
+
+    private void EdytujPrzedzialCzasowy(Aktywnosc akt)
+    {
+        if (!SpróbujPobierzGodzine("Podaj nową godzinę początku (format HH:mm, np. 09:00): ", out DateTime wpisanyStart))
+        {
+            return;
+        }
+
+        if (!SpróbujPobierzGodzine("Podaj nową godzinę końca (format HH:mm, np. 11:30): ", out DateTime wpisanyKoniec))
+        {
+            return;
+        }
+
+        DateTime nowyStart = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyStart.Hour, wpisanyStart.Minute, 0);
+        DateTime nowyKoniec = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyKoniec.Hour, wpisanyKoniec.Minute, 0);
+
+        if (nowyKoniec <= nowyStart)
+        {
+            Console.WriteLine("Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia!");
+            return;
+        }
+
+        if (SprawdzKonfliktyCzasowe(nowyStart, nowyKoniec, akt))
+        {
+            Console.WriteLine("Godziny kolidują z inną zaplanowaną aktywnością w tym dniu!");
+            return;
+        }
+
+        akt.CzasStart = nowyStart;
+        akt.CzasKoniec = nowyKoniec;
+        SortujIPorządkujId();
+        Console.WriteLine("Przedział czasowy został zaktualizowany.");
+    }
+
+    private void EdytujRodzajAktywnosci(Aktywnosc akt)
+    {
+        if (!SpróbujPobierzOpcje("\nWybierz nowy rodzaj aktywności (1. Atrakcja, 2. Nocleg, 3. Przejazd): ", new[] { "1", "2", "3" }, out string nowyRodzaj))
+        {
+            return;
+        }
+
+        string obecnyOpis = akt.Opis;
+        DateTime obecnyStart = akt.CzasStart;
+        DateTime obecnyKoniec = akt.CzasKoniec;
+        Aktywnosc? nowoUtworzona = UtworzAktywnosc(nowyRodzaj, obecnyStart, obecnyKoniec, obecnyOpis);
+
+        if (nowoUtworzona == null)
+        {
+            Console.WriteLine("Nie udało się utworzyć nowego typu aktywności.");
+            return;
+        }
+
+        nowoUtworzona.id = akt.id;
+        int indeks = aktywnosci.IndexOf(akt);
+        aktywnosci[indeks] = nowoUtworzona;
+        Console.WriteLine("[Sukces] Rodzaj aktywności i jej dane zostały zmienione.");
+    }
+
     public void UsunAktywnosc()
     {
-      try
+        Console.WriteLine($"\n=== Usuwanie aktywności z dnia: {Data.ToShortDateString()} ===");
+
+        if (aktywnosci.Count == 0)
         {
-            Console.WriteLine($"\n===Usuwanie aktywnosci z dnia: {Data.ToShortDateString()}===");
-
-            if (aktywnosci.Count == 0)
-            {
-                Console.WriteLine("Nie ma aktywności do usunięcia.");
-                return;
-            }
-
-            Console.Write("Podaj numer aktywności, którą chcesz usunąć: ");
-            string wybranyIdInput = PobierzLinie();
-            if (!int.TryParse(wybranyIdInput, out int wybranyId))
-            {
-                Console.WriteLine("Musisz podać liczbę jako numer aktywności!");
-                return;
-            }
-
-            Aktywnosc? doUsuniecia = aktywnosci.Find(a => a.id == wybranyId);
-
-            if (doUsuniecia != null)
-            {
-                aktywnosci.Remove(doUsuniecia);
-
-                for (int i = 0; i < aktywnosci.Count; i++)
-                {
-                    aktywnosci[i].id = i + 1;
-                }
-
-                Console.WriteLine($"Aktywność została usunięta.");
-            }
-            else
-            {
-                Console.WriteLine($"Nie znaleziono aktywności");
-            }
+            Console.WriteLine("Nie ma aktywności do usunięcia.");
+            return;
         }
-        catch (FormatException)
+
+        Console.Write("Podaj numer aktywności, którą chcesz usunąć: ");
+        string wybranyIdInput = PobierzLinie();
+        if (!int.TryParse(wybranyIdInput, out int wybranyId))
         {
             Console.WriteLine("Musisz podać liczbę jako numer aktywności!");
+            return;
         }
+
+        Aktywnosc? doUsuniecia = aktywnosci.Find(a => a.id == wybranyId);
+        if (doUsuniecia == null)
+        {
+            Console.WriteLine("Nie znaleziono aktywności.");
+            return;
+        }
+
+        aktywnosci.Remove(doUsuniecia);
+        SortujIPorządkujId();
+        Console.WriteLine("Aktywność została usunięta.");
     }
 
-    public bool SprawdzKonfliktyCzasowe(DateTime start, DateTime koniec)
+    public bool SprawdzKonfliktyCzasowe(DateTime start, DateTime koniec, Aktywnosc? ignore = null)
     {
         foreach (var akt in aktywnosci)
         {
+            if (akt == ignore)
+            {
+                continue;
+            }
+
             if (start < akt.CzasKoniec && koniec > akt.CzasStart)
             {
                 return true;
@@ -335,6 +273,51 @@ public class Dzien
 
         return false;
     }
+
+    private bool SpróbujPobierzGodzine(string prompt, out DateTime godzina)
+    {
+        string input = PobierzLinie(prompt);
+        if (!DateTime.TryParseExact(input, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out godzina))
+        {
+            Console.WriteLine("Błąd: Niepoprawny format godziny! Użyj formatu HH:mm (np. 08:15).");
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool SpróbujPobierzOpcje(string prompt, string[] dozwoloneOpcje, out string wynik)
+    {
+        wynik = PobierzLinie(prompt);
+        if (Array.IndexOf(dozwoloneOpcje, wynik) < 0)
+        {
+            Console.WriteLine("Wybierz poprawną opcję.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private string PobierzTekstOWymiarze(string prompt, int maxDlugosc)
+    {
+        while (true)
+        {
+            string tekst = PobierzLinie(prompt);
+            if (tekst.Length <= maxDlugosc)
+            {
+                return tekst;
+            }
+
+            Console.WriteLine($"Błąd: Twój opis ma {tekst.Length} znaków. Maksymalna dozwolona długość to {maxDlugosc} znaków!");
+        }
+    }
+
+    private string PobierzLinie(string prompt)
+    {
+        Console.Write(prompt);
+        return PobierzLinie();
+    }
+
     private string PobierzLinie() => Console.ReadLine()?.Trim() ?? string.Empty;
 
     public void WyswietlWidokDnia()
@@ -353,11 +336,10 @@ public class Dzien
         {
             string rodzaj = akt.GetType().Name;
             if (rodzaj == "Zwiedzanie") rodzaj = "Atrakcja";
-
             string przedzialCzasowy = $"{akt.CzasStart:HH:mm}-{akt.CzasKoniec:HH:mm}";
-
             Console.WriteLine($"{akt.id,-3} | {przedzialCzasowy,-17} | {rodzaj,-17} | {akt.Opis}");
         }
+
         Console.WriteLine();
     }
 }

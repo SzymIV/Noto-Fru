@@ -16,7 +16,11 @@ public class Kalendarz
 
     public string PobierzTytul() => tytulDestynacji;
 
-    public void DodajDzien(Dzien dzien) => dni.Add(dzien);
+    public void DodajDzien(Dzien dzien)
+    {
+        dni.Add(dzien);
+        dni.Sort();
+    }
 
     public bool UsunDzien(int indeks)
     {
