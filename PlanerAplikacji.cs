@@ -347,7 +347,7 @@ public class PlanerAplikacja
             {
                 case "1": dzien.DodajAktywnosc(); break; 
                 case "2": dzien.EdytujAktywnosc(); break; 
-                case "3": dzien.UsunAktywnosc(0); break; 
+                case "3": dzien.UsunAktywnosc(); break; 
                 case "4": dziala = false; break;
                 default: Console.WriteLine("Niepoprawna opcja!"); break;
             }
