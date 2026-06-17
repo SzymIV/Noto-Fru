@@ -68,7 +68,7 @@ public class PlanerAplikacja
 
         for (int i = 0; i < kalendarze.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {kalendarze[i].TytulDestynacji()}");
+            Console.WriteLine($"{i + 1}. {kalendarze[i].PobierzTytul()}");
         }
     }
 
@@ -101,10 +101,11 @@ public class PlanerAplikacja
             Console.WriteLine();
             Console.WriteLine($"=== {kalendarz.PobierzTytul()} ===");
             Console.WriteLine("1. Dodaj dzień");
-            Console.WriteLine("2. Usuń dzień");
-            Console.WriteLine("3. Pokaż dni (lista)");
-            Console.WriteLine("4. Pokaż widok miesiąca");
-            Console.WriteLine("5. Powrót");
+            Console.WriteLine("2. Dodaj dni hurtowo");
+            Console.WriteLine("3. Usuń dzień");
+            Console.WriteLine("4. Pokaż dni (lista)");
+            Console.WriteLine("5. Pokaż widok miesiąca");
+            Console.WriteLine("6. Powrót");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -115,15 +116,18 @@ public class PlanerAplikacja
                     DodajDzien(kalendarz);
                     break;
                 case "2":
-                    UsuwanieDnia(kalendarz);
+                    DodajDniHurtowo(kalendarz);
                     break;
                 case "3":
-                    WyswietlDniWKalendarzu(kalendarz);
+                    UsuwanieDnia(kalendarz);
                     break;
                 case "4":
-                    WyswietlMiesiacWKalendarzu(kalendarz);
+                    WyswietlDniWKalendarzu(kalendarz);
                     break;
                 case "5":
+                    WyswietlMiesiacWKalendarzu(kalendarz);
+                    break;
+                case "6":
                     dziala = false;
                     break;
                 default:
@@ -189,11 +193,28 @@ public class PlanerAplikacja
 
     private void DodajDzien(Kalendarz kalendarz)
     {
-        Console.Write("Podaj datę (dd-mm-rrrr): ");
+        Console.Write("Podaj datę (dd-mm-rrrr lub rrrr-mm-dd): ");
         DateTime data = DateTime.Parse(Console.ReadLine());
         Dzien dzien = new Dzien(data);
         kalendarz.DodajDzien(dzien);
         Console.WriteLine("Dodano dzień!");
+    }
+
+    private void DodajDniHurtowo(Kalendarz kalendarz)
+    {
+        Console.Write("Podaj datę początkową (dd-mm-rrrr lub rrrr-mm-dd): ");
+        DateTime dataPoczatkowa = DateTime.Parse(Console.ReadLine());
+
+        Console.Write("Ile dni dodać?: ");
+        int liczbaDni = int.Parse(Console.ReadLine());
+
+        for (int i = 0; i < liczbaDni; i++)
+        {
+            Dzien dzien = new Dzien(dataPoczatkowa.AddDays(i));
+            kalendarz.DodajDzien(dzien);
+        }
+
+        Console.WriteLine($"Pomyślnie dodano {liczbaDni} dni.");
     }
 
     private void WyswietlMiesiacWKalendarzu(Kalendarz kalendarz)
@@ -212,7 +233,7 @@ public class PlanerAplikacja
                 return;
             }
 
-            kalendarz.PokazWidokTrzechMiesiecy(rok, miesiac);
+            kalendarz.PokazWidokMiesiecy(rok, miesiac);
         }
         catch (FormatException)
         {

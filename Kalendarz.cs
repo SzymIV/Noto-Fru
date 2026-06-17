@@ -6,25 +6,11 @@ public class Kalendarz
     private string tytulDestynacji;
     private List<Dzien> dni = new List<Dzien>();
 
-    public Kalendarz(string tytul)
-    {
-        tytulDestynacji = tytul;
-    }
+    public Kalendarz(string tytul) => tytulDestynacji = tytul;
 
-    public string TytulDestynacji()
-    {
-        return tytulDestynacji;
-    }
+    public string PobierzTytul() => tytulDestynacji;
 
-    public string PobierzTytul()
-    {
-        return tytulDestynacji;
-    }
-
-    public void DodajDzien(Dzien dzien)
-    {
-        dni.Add(dzien);
-    }
+    public void DodajDzien(Dzien dzien) => dni.Add(dzien);
 
     public bool UsunDzien(int indeks)
     {
@@ -37,10 +23,7 @@ public class Kalendarz
         return true;
     }
 
-    public int PobierzLiczbeDni()
-    {
-        return dni.Count;
-    }
+    public int PobierzLiczbeDni() => dni.Count;
 
     public List<string> PobierzSformatowaneDni()
     {
@@ -54,7 +37,7 @@ public class Kalendarz
         return sformatowaneDni;
     }
 
-    public void PokazWidokTrzechMiesiecy(int rok, int miesiac)
+    public void PokazWidokMiesiecy(int rok, int miesiac)
     {
         DateTime wybranaData = new DateTime(rok, miesiac, 1);
         DateTime poprzedniaData = wybranaData.AddMonths(-1);
