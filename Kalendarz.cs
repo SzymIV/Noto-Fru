@@ -29,7 +29,7 @@ public class Kalendarz
             return false;
         }
 
-        dni.RemoveAt(indeks);
+        dni.RemoveAt(indeks-1);
         return true;
     }
 

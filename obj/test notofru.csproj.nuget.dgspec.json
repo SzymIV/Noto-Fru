@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj": {}
+    "c:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj": {}
   },
   "projects": {
-    "C:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj": {
+    "c:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj",
+        "projectUniqueName": "c:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj",
         "projectName": "test notofru",
-        "projectPath": "C:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj",
+        "projectPath": "c:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\test notofru.csproj",
         "packagesPath": "C:\\Users\\marta\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\obj\\",
+        "outputPath": "c:\\Users\\marta\\Documents\\GitHub\\Noto-Fru\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marta\\AppData\\Roaming\\NuGet\\NuGet.Config",
