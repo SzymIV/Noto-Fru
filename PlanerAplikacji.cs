@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
 public class PlanerAplikacja
 {
@@ -17,7 +19,9 @@ public class PlanerAplikacja
             Console.WriteLine("2. Pokaż kalendarze");
             Console.WriteLine("3. Otwórz kalendarz");
             Console.WriteLine("4. Kalendarz");
-            Console.WriteLine("5. Wyjdź");
+            Console.WriteLine("5. Zapisz Do pliku");
+            Console.WriteLine("6. Wczytaj z pliku");
+            Console.WriteLine("7. Wyjdź");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -37,6 +41,12 @@ public class PlanerAplikacja
                     WyswietlMiesiac();
                     break;
                 case "5":
+                    ZapiszDoPliku("kalendarze.json");
+                    break;
+                case "6":
+                    WczytajZPliku("kalendarze.json");
+                    break;
+                case "7":
                     dziala = false;
                     break;
                 default:
@@ -277,5 +287,57 @@ public class PlanerAplikacja
         {
             Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
         }
+    }
+
+
+
+    private void ZapiszDoPliku(string sciezka)
+    {
+        try
+        {
+            var opcje = new JsonSerializerOptions 
+            { 
+                WriteIndented = true,
+                IncludeFields = true 
+            };
+            
+            string jsonString = JsonSerializer.Serialize(kalendarze, opcje);
+            File.WriteAllText(sciezka, jsonString);
+            Console.WriteLine("Pomyślnie zapisano stan aplikacji do pliku JSON!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas zapisu: {ex.Message}");
+        }
+    }
+
+    private void WczytajZPliku(string sciezka)
+    {
+        if (!File.Exists(sciezka))
+        {
+            Console.WriteLine("Brak zapisanego pliku danych.");
+            return;
+        }
+
+        try
+        {
+            var opcje = new JsonSerializerOptions 
+            { 
+                IncludeFields = true 
+            };
+            
+            string jsonString = File.ReadAllText(sciezka);
+            var wczytaneKalendarze = JsonSerializer.Deserialize<List<Kalendarz>>(jsonString, opcje);
+            
+            if (wczytaneKalendarze != null)
+            {
+                kalendarze = wczytaneKalendarze;
+                Console.WriteLine("Pomyślnie wczytano dane z pliku JSON!");
+            }
+        }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd podczas odczytu danych: {ex.Message}");
+            }
     }
 }

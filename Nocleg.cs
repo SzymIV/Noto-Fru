@@ -1,9 +1,14 @@
 using System;
+using System.Text.Json.Serialization;
 
 public class Nocleg : Aktywnosc
 {
+    [JsonInclude]
     private string nazwaObiektu;
+    [JsonInclude]
     private string adres;
+
+    public Nocleg() { }
 
     public Nocleg(
         DateTime start,

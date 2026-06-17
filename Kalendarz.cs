@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 public class Kalendarz
 {
+    [JsonInclude]
     private string tytulDestynacji;
+
+    [JsonInclude]
     private List<Dzien> dni = new List<Dzien>();
+
+    public Kalendarz() { }
 
     public Kalendarz(string tytul) => tytulDestynacji = tytul;
 
@@ -14,12 +20,12 @@ public class Kalendarz
 
     public bool UsunDzien(int indeks)
     {
-        if (indeks < 1 || indeks > dni.Count)
+        if (indeks < 0 || indeks >= dni.Count)
         {
             return false;
         }
 
-        dni.RemoveAt(indeks - 1);
+        dni.RemoveAt(indeks);
         return true;
     }
 
@@ -31,7 +37,7 @@ public class Kalendarz
 
         for (int i = 0; i < dni.Count; i++)
         {
-            sformatowaneDni.Add($"{i + 1}. {dni[i].Data.ToShortDateString()}");
+            sformatowaneDni.Add($"{i}. {dni[i].Data.ToShortDateString()}");
         }
 
         return sformatowaneDni;

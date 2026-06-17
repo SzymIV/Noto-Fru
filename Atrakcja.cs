@@ -1,9 +1,14 @@
 using System;
+using System.Text.Json.Serialization;
 
 public class Atrakcja : Aktywnosc
 {
+    [JsonInclude]
     private string nazwaAtrakcji;
+    [JsonInclude]
     private bool czyBiletowane;
+
+    public Atrakcja() { }
 
     public Atrakcja(
         DateTime start,
