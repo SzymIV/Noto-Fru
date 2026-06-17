@@ -1,11 +1,11 @@
 using System;
 
-public class Zwiedzanie : Aktywnosc
+public class Atrakcja : Aktywnosc
 {
     private string nazwaAtrakcji;
     private bool czyBiletowane;
 
-    public Zwiedzanie(
+    public Atrakcja(
         DateTime start,
         DateTime koniec,
         string opis,
@@ -19,7 +19,7 @@ public class Zwiedzanie : Aktywnosc
 
     public override void WyswietlSzczegoly()
     {
-        Console.WriteLine($"Zwiedzanie: {nazwaAtrakcji}");
+        Console.WriteLine($"Atrakcja: {nazwaAtrakcji}");
         Console.WriteLine($"Biletowane: {czyBiletowane}");
     }
 }
