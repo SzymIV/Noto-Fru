@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 public class Dzien
 {
     public DateTime Data { get; set; }
+    [JsonInclude]
     private List<Aktywnosc> aktywnosci = new List<Aktywnosc>();
     public Dzien(DateTime data)
     {
         Data = data;
     }
 
-    public void DodajAktywnosc(Aktywnosc akt)
+    public Dzien() { }
+
+    public void DodajAktywnosc()
     {
         try
         {

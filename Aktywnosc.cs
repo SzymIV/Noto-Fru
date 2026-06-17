@@ -1,11 +1,21 @@
 using System;
+using System.Text.Json.Serialization;
 
+[JsonDerivedType(typeof(Atrakcja), typeDiscriminator: "Atrakcja")]
+[JsonDerivedType(typeof(Nocleg), typeDiscriminator: "Nocleg")]
+[JsonDerivedType(typeof(Przejazd), typeDiscriminator: "Przejazd")]
 public abstract class Aktywnosc
 {
+
     public int id { get; set; }
+    [JsonInclude]
     protected DateTime czasStart;
+    [JsonInclude]
     protected DateTime czasKoniec;
+    [JsonInclude]
     protected string opis;
+
+    public Aktywnosc() { }
 
     public DateTime CzasStart { get => czasStart; set => czasStart = value; }
     public DateTime CzasKoniec { get => czasKoniec; set => czasKoniec = value; }

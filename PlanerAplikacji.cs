@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
 public class PlanerAplikacja
 {
@@ -16,8 +18,10 @@ public class PlanerAplikacja
             Console.WriteLine("1. Dodaj kalendarz");
             Console.WriteLine("2. Pokaż kalendarze");
             Console.WriteLine("3. Otwórz kalendarz");
-            Console.WriteLine("4. Kalendarz");
-            Console.WriteLine("5. Wyjdź");
+            Console.WriteLine("4. Przegląd ogólny (widok miesiąca)");
+            Console.WriteLine("5. Zapisz Do pliku");
+            Console.WriteLine("6. Wczytaj z pliku");
+            Console.WriteLine("7. Wyjdź");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -37,6 +41,12 @@ public class PlanerAplikacja
                     WyswietlMiesiac();
                     break;
                 case "5":
+                    ZapiszDoPliku(@"c:\kalendarze.json");
+                    break;
+                case "6":
+                    WczytajZPliku(@"c:\kalendarze.json");
+                    break;
+                case "7":
                     dziala = false;
                     break;
                 default:
@@ -68,7 +78,7 @@ public class PlanerAplikacja
 
         for (int i = 0; i < kalendarze.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {kalendarze[i].TytulDestynacji()}");
+            Console.WriteLine($"{i + 1}. {kalendarze[i].PobierzTytul()}");
         }
     }
 
@@ -80,7 +90,17 @@ public class PlanerAplikacja
             return;
 
         Console.Write("Wybierz numer kalendarza: ");
-        int numer = int.Parse(Console.ReadLine());
+        int numer;
+
+        try
+        {
+            numer = int.Parse(Console.ReadLine());
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+            return;
+        }
 
         if (numer < 1 || numer > kalendarze.Count)
         {
@@ -101,10 +121,12 @@ public class PlanerAplikacja
             Console.WriteLine();
             Console.WriteLine($"=== {kalendarz.PobierzTytul()} ===");
             Console.WriteLine("1. Dodaj dzień");
-            Console.WriteLine("2. Usuń dzień");
-            Console.WriteLine("3. Pokaż dni (lista)");
-            Console.WriteLine("4. Pokaż widok miesiąca");
-            Console.WriteLine("5. Powrót");
+            Console.WriteLine("2. Dodaj okres");
+            Console.WriteLine("3. Usuń dzień");
+            Console.WriteLine("4. Pokaż dni (lista)");
+            Console.WriteLine("5. Pokaż widok miesiąca");
+            Console.WriteLine("6. Widok dnia");
+            Console.WriteLine("7. Powrót");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -115,15 +137,21 @@ public class PlanerAplikacja
                     DodajDzien(kalendarz);
                     break;
                 case "2":
-                    UsuwanieDnia(kalendarz);
+                    DodajDniHurtowo(kalendarz);
                     break;
                 case "3":
-                    WyswietlDniWKalendarzu(kalendarz);
+                    UsuwanieDnia(kalendarz);
                     break;
                 case "4":
-                    WyswietlMiesiacWKalendarzu(kalendarz);
+                    WyswietlDniWKalendarzu(kalendarz);
                     break;
                 case "5":
+                    WyswietlMiesiacWKalendarzu(kalendarz);
+                    break;
+                case "6": 
+                    OtworzDzien(kalendarz); 
+                    break;
+                case "7":
                     dziala = false;
                     break;
                 default:
@@ -189,11 +217,46 @@ public class PlanerAplikacja
 
     private void DodajDzien(Kalendarz kalendarz)
     {
-        Console.Write("Podaj datę (dd-mm-rrrr): ");
-        DateTime data = DateTime.Parse(Console.ReadLine());
-        Dzien dzien = new Dzien(data);
-        kalendarz.DodajDzien(dzien);
-        Console.WriteLine("Dodano dzień!");
+        Console.Write("Podaj datę (dd-mm-rrrr lub rrrr-mm-dd): ");
+        try
+        {
+            DateTime data = DateTime.Parse(Console.ReadLine());
+            Dzien dzien = new Dzien(data);
+            kalendarz.DodajDzien(dzien);
+            Console.WriteLine("Dodano dzień!");
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Niepoprawny format daty!");
+        }
+    }
+
+    private void DodajDniHurtowo(Kalendarz kalendarz)
+    {
+        try
+        {
+            Console.Write("Podaj datę początkową (dd-mm-rrrr lub rrrr-mm-dd): ");
+            DateTime dataPoczatkowa = DateTime.Parse(Console.ReadLine());
+
+            Console.Write("Ile dni dodać?: ");
+            int liczbaDni = int.Parse(Console.ReadLine());
+
+            for (int i = 0; i < liczbaDni; i++)
+            {
+                Dzien dzien = new Dzien(dataPoczatkowa.AddDays(i));
+                kalendarz.DodajDzien(dzien);
+            }
+
+            Console.WriteLine($"Pomyślnie dodano {liczbaDni} dni.");
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono niepoprawny format daty lub liczby!");
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
+        }
     }
 
     private void WyswietlMiesiacWKalendarzu(Kalendarz kalendarz)
@@ -212,7 +275,7 @@ public class PlanerAplikacja
                 return;
             }
 
-            kalendarz.PokazWidokTrzechMiesiecy(rok, miesiac);
+            kalendarz.PokazWidokMiesiecy(rok, miesiac);
         }
         catch (FormatException)
         {
@@ -255,6 +318,114 @@ public class PlanerAplikacja
         catch (OverflowException)
         {
             Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
+        }
+    }
+
+    private void OtworzDzien(Kalendarz kalendarz)
+    {
+    WyswietlDniWKalendarzu(kalendarz);
+
+    if (kalendarz.PobierzLiczbeDni() == 0) return;
+
+        try
+        {
+            Console.Write("\nWybierz numer dnia, aby zaplanować w nim aktywności: ");
+            int numer = int.Parse(Console.ReadLine());
+
+            Dzien wybranyDzien = kalendarz.PobierzDzien(numer); 
+
+            if (wybranyDzien != null)
+            {
+                MenuDnia(wybranyDzien); 
+            }
+            else
+            {
+                Console.WriteLine("Niepoprawny numer dnia.");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+        }
+    }
+
+
+    private void MenuDnia(Dzien dzien)
+    {
+        bool dziala = true;
+
+        while (dziala)
+        {
+      
+            dzien.WyswietlWidokDnia(); 
+
+            Console.WriteLine("=== ZARZĄDZANIE DNIEM ===");
+            Console.WriteLine("1. Dodaj aktywność");
+            Console.WriteLine("2. Edytuj aktywność");
+            Console.WriteLine("3. Usuń aktywność");
+            Console.WriteLine("4. Powrót");
+            Console.Write("Wybierz opcję: ");
+
+            string wybor = Console.ReadLine();
+
+            switch (wybor)
+            {
+                case "1": dzien.DodajAktywnosc(); break; 
+                case "2": dzien.EdytujAktywnosc(); break; 
+                case "3": dzien.UsunAktywnosc(); break; 
+                case "4": dziala = false; break;
+                default: Console.WriteLine("Niepoprawna opcja!"); break;
+            }
+        }
+    }
+
+    private void ZapiszDoPliku(string sciezka)
+    {
+        try
+        {
+            var opcje = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                IncludeFields = true
+            };
+
+            string jsonString = JsonSerializer.Serialize(kalendarze, opcje);
+            File.WriteAllText(sciezka, jsonString);
+            Console.WriteLine("Pomyślnie zapisano stan aplikacji do pliku JSON!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas zapisu: {ex.Message}");
+        }
+    }
+
+    private void WczytajZPliku(string sciezka)
+    {
+        if (!File.Exists(sciezka))
+        {
+            Console.WriteLine("Brak zapisanego pliku danych.");
+            return;
+        }
+
+        try
+        {
+            var opcje = new JsonSerializerOptions
+            {
+                IncludeFields = true
+            };
+
+            string jsonString = File.ReadAllText(sciezka);
+            var wczytaneKalendarze = JsonSerializer.Deserialize<List<Kalendarz>>(jsonString, opcje);
+
+            if (wczytaneKalendarze != null)
+            {
+                kalendarze = wczytaneKalendarze;
+                Console.WriteLine("Pomyślnie wczytano dane z pliku JSON!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas odczytu danych: {ex.Message}");
         }
     }
 }
