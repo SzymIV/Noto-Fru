@@ -9,6 +9,8 @@ public class Kalendarz
     [JsonInclude]
     private List<Dzien> dni = new List<Dzien>();
 
+    public Kalendarz() { }
+
     public Kalendarz(string tytul) => tytulDestynacji = tytul;
 
     public string PobierzTytul() => tytulDestynacji;
@@ -89,4 +91,13 @@ public class Kalendarz
             }
         }
     }
+
+    public Dzien PobierzDzien(int indeks)
+{
+    if (indeks < 1 || indeks > dni.Count)
+    {
+        return null;
+    }
+    return dni[indeks - 1]; // Zwracamy obiekt dnia (indeksowanie od 0)
+}
 }

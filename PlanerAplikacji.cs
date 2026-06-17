@@ -18,7 +18,7 @@ public class PlanerAplikacja
             Console.WriteLine("1. Dodaj kalendarz");
             Console.WriteLine("2. Pokaż kalendarze");
             Console.WriteLine("3. Otwórz kalendarz");
-            Console.WriteLine("4. Kalendarz");
+            Console.WriteLine("4. Przegląd ogólny (widok miesiąca)");
             Console.WriteLine("5. Zapisz Do pliku");
             Console.WriteLine("6. Wczytaj z pliku");
             Console.WriteLine("7. Wyjdź");
@@ -41,10 +41,10 @@ public class PlanerAplikacja
                     WyswietlMiesiac();
                     break;
                 case "5":
-                    ZapiszDoPliku("kalendarze.json");
+                    ZapiszDoPliku(@"c:\kalendarze.json");
                     break;
                 case "6":
-                    WczytajZPliku("kalendarze.json");
+                    WczytajZPliku(@"c:\kalendarze.json");
                     break;
                 case "7":
                     dziala = false;
@@ -111,11 +111,12 @@ public class PlanerAplikacja
             Console.WriteLine();
             Console.WriteLine($"=== {kalendarz.PobierzTytul()} ===");
             Console.WriteLine("1. Dodaj dzień");
-            Console.WriteLine("2. Dodaj dni hurtowo");
+            Console.WriteLine("2. Dodaj okres");
             Console.WriteLine("3. Usuń dzień");
             Console.WriteLine("4. Pokaż dni (lista)");
             Console.WriteLine("5. Pokaż widok miesiąca");
-            Console.WriteLine("6. Powrót");
+            Console.WriteLine("6. Widok dnia");
+            Console.WriteLine("7. Powrót");
             Console.Write("Wybierz opcję: ");
 
             string wybor = Console.ReadLine();
@@ -137,7 +138,10 @@ public class PlanerAplikacja
                 case "5":
                     WyswietlMiesiacWKalendarzu(kalendarz);
                     break;
-                case "6":
+                case "6": 
+                    OtworzDzien(kalendarz); 
+                    break;
+                case "7":
                     dziala = false;
                     break;
                 default:
@@ -289,6 +293,66 @@ public class PlanerAplikacja
         }
     }
 
+    private void OtworzDzien(Kalendarz kalendarz)
+    {
+    WyswietlDniWKalendarzu(kalendarz);
+
+    if (kalendarz.PobierzLiczbeDni() == 0) return;
+
+        try
+        {
+            Console.Write("\nWybierz numer dnia, aby zaplanować w nim aktywności: ");
+            int numer = int.Parse(Console.ReadLine());
+
+            // Korzystamy z nowej metody z Kroku 1
+            Dzien wybranyDzien = kalendarz.PobierzDzien(numer); 
+
+            if (wybranyDzien != null)
+            {
+                MenuDnia(wybranyDzien); // Przechodzimy poziom niżej!
+            }
+            else
+            {
+                Console.WriteLine("Niepoprawny numer dnia.");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+        }
+    }
+
+
+    private void MenuDnia(Dzien dzien)
+    {
+        bool dziala = true;
+
+        while (dziala)
+        {
+            // Za każdym obrotem pętli pokazujemy ładną tabelkę z aktywnościami z Twojego kodu
+            dzien.WyswietlWidokDnia(); 
+
+            Console.WriteLine("=== ZARZĄDZANIE DNIEM ===");
+            Console.WriteLine("1. Dodaj aktywność");
+            Console.WriteLine("2. Edytuj aktywność");
+            Console.WriteLine("3. Usuń aktywność");
+            Console.WriteLine("4. Powrót");
+            Console.Write("Wybierz opcję: ");
+
+            string wybor = Console.ReadLine();
+
+            // UWAGA: Jeśli w Kroku 2 nie usunąłeś parametrów w klasie Dzien.cs, 
+            // musisz w nawiasach wstawić np. (null) i (0) aby kod się kompilował.
+            switch (wybor)
+            {
+                case "1": dzien.DodajAktywnosc(null); break; 
+                case "2": dzien.EdytujAktywnosc(0); break; 
+                case "3": dzien.UsunAktywnosc(0); break; 
+                case "4": dziala = false; break;
+                default: Console.WriteLine("Niepoprawna opcja!"); break;
+            }
+        }
+    }
 
 
     private void ZapiszDoPliku(string sciezka)
