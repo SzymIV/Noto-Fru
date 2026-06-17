@@ -10,6 +10,15 @@ public class Dzien
         Data = data;
     }
 
+    private void SortujIPorządkujId()
+{
+    aktywnosci.Sort(); 
+    for (int i = 0; i < aktywnosci.Count; i++)
+    {
+        aktywnosci[i].id = i + 1; 
+    }
+}
+
     public void DodajAktywnosc()
     {
         while (true)
@@ -103,7 +112,7 @@ public class Dzien
 
             if (nowaAktywnosc != null)
             {
-                nowaAktywnosc.id = aktywnosci.Count + 1;
+                SortujIPorządkujId();
                 aktywnosci.Add(nowaAktywnosc);
                 Console.WriteLine("Aktywność została pdodana do harmonogramu!");
             }
@@ -277,13 +286,7 @@ public class Dzien
 
             if (doUsuniecia != null)
             {
-                aktywnosci.Remove(doUsuniecia);
-
-                for (int i = 0; i < aktywnosci.Count; i++)
-                {
-                    aktywnosci[i].id = i + 1;
-                }
-
+                SortujIPorządkujId();
                 Console.WriteLine($"Aktywność została usunięta.");
             }
             else
