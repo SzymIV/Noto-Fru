@@ -41,10 +41,10 @@ public class PlanerAplikacja
                     WyswietlMiesiac();
                     break;
                 case "5":
-                    ZapiszDoPliku(@"c:\kalendarze.json");
+                    ZapiszDoPliku(@"kalendarze.json");
                     break;
                 case "6":
-                    WczytajZPliku(@"c:\kalendarze.json");
+                    WczytajZPliku(@"kalendarze.json");
                     break;
                 case "7":
                     dziala = false;

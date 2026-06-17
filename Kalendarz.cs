@@ -37,7 +37,8 @@ public class Kalendarz
 
         for (int i = 0; i < dni.Count; i++)
         {
-            sformatowaneDni.Add($"{i}. {dni[i].Data.ToShortDateString()}");
+            int x = i + 1;
+            sformatowaneDni.Add($"{x}. {dni[i].Data.ToShortDateString()}");
         }
 
         return sformatowaneDni;
