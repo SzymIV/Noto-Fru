@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 public class Atrakcja : Aktywnosc
 {
     [JsonInclude]
-    private string nazwaAtrakcji;
+    private string nazwaAtrakcji = string.Empty;
     [JsonInclude]
     private bool czyBiletowane;
 
