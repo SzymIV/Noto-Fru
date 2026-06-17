@@ -90,7 +90,17 @@ public class PlanerAplikacja
             return;
 
         Console.Write("Wybierz numer kalendarza: ");
-        int numer = int.Parse(Console.ReadLine());
+        int numer;
+
+        try
+        {
+            numer = int.Parse(Console.ReadLine());
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+            return;
+        }
 
         if (numer < 1 || numer > kalendarze.Count)
         {
@@ -204,27 +214,45 @@ public class PlanerAplikacja
     private void DodajDzien(Kalendarz kalendarz)
     {
         Console.Write("Podaj datę (dd-mm-rrrr lub rrrr-mm-dd): ");
-        DateTime data = DateTime.Parse(Console.ReadLine());
-        Dzien dzien = new Dzien(data);
-        kalendarz.DodajDzien(dzien);
-        Console.WriteLine("Dodano dzień!");
+        try
+        {
+            DateTime data = DateTime.Parse(Console.ReadLine());
+            Dzien dzien = new Dzien(data);
+            kalendarz.DodajDzien(dzien);
+            Console.WriteLine("Dodano dzień!");
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Niepoprawny format daty!");
+        }
     }
 
     private void DodajDniHurtowo(Kalendarz kalendarz)
     {
-        Console.Write("Podaj datę początkową (dd-mm-rrrr lub rrrr-mm-dd): ");
-        DateTime dataPoczatkowa = DateTime.Parse(Console.ReadLine());
-
-        Console.Write("Ile dni dodać?: ");
-        int liczbaDni = int.Parse(Console.ReadLine());
-
-        for (int i = 0; i < liczbaDni; i++)
+        try
         {
-            Dzien dzien = new Dzien(dataPoczatkowa.AddDays(i));
-            kalendarz.DodajDzien(dzien);
-        }
+            Console.Write("Podaj datę początkową (dd-mm-rrrr lub rrrr-mm-dd): ");
+            DateTime dataPoczatkowa = DateTime.Parse(Console.ReadLine());
 
-        Console.WriteLine($"Pomyślnie dodano {liczbaDni} dni.");
+            Console.Write("Ile dni dodać?: ");
+            int liczbaDni = int.Parse(Console.ReadLine());
+
+            for (int i = 0; i < liczbaDni; i++)
+            {
+                Dzien dzien = new Dzien(dataPoczatkowa.AddDays(i));
+                kalendarz.DodajDzien(dzien);
+            }
+
+            Console.WriteLine($"Pomyślnie dodano {liczbaDni} dni.");
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Błąd: Wprowadzono niepoprawny format daty lub liczby!");
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
+        }
     }
 
     private void WyswietlMiesiacWKalendarzu(Kalendarz kalendarz)
@@ -289,18 +317,16 @@ public class PlanerAplikacja
         }
     }
 
-
-
     private void ZapiszDoPliku(string sciezka)
     {
         try
         {
-            var opcje = new JsonSerializerOptions 
-            { 
+            var opcje = new JsonSerializerOptions
+            {
                 WriteIndented = true,
-                IncludeFields = true 
+                IncludeFields = true
             };
-            
+
             string jsonString = JsonSerializer.Serialize(kalendarze, opcje);
             File.WriteAllText(sciezka, jsonString);
             Console.WriteLine("Pomyślnie zapisano stan aplikacji do pliku JSON!");
@@ -321,23 +347,23 @@ public class PlanerAplikacja
 
         try
         {
-            var opcje = new JsonSerializerOptions 
-            { 
-                IncludeFields = true 
+            var opcje = new JsonSerializerOptions
+            {
+                IncludeFields = true
             };
-            
+
             string jsonString = File.ReadAllText(sciezka);
             var wczytaneKalendarze = JsonSerializer.Deserialize<List<Kalendarz>>(jsonString, opcje);
-            
+
             if (wczytaneKalendarze != null)
             {
                 kalendarze = wczytaneKalendarze;
                 Console.WriteLine("Pomyślnie wczytano dane z pliku JSON!");
             }
         }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Błąd podczas odczytu danych: {ex.Message}");
-            }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas odczytu danych: {ex.Message}");
+        }
     }
 }
