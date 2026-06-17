@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 public class Kalendarz
 {
+    [JsonInclude]
     private string tytulDestynacji;
+    [JsonInclude]
     private List<Dzien> dni = new List<Dzien>();
+
+    public Kalendarz() { }
+
 
     public Kalendarz(string tytul)
     {

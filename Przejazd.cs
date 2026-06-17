@@ -1,10 +1,16 @@
 using System;
+using System.Text.Json.Serialization;
 
 public class Przejazd : Aktywnosc
 {
+    [JsonInclude]
     private string srodekTransportu;
+    [JsonInclude]
     private string stacjaPoczatkowa;
+    [JsonInclude]
     private string stacjaKoncowa;
+
+    public Przejazd() { }
 
     public Przejazd(
         DateTime start,
