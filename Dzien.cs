@@ -20,10 +20,20 @@ public class Dzien
         {
             Console.WriteLine($"\n===Dodawanie Aktywności na dzień: {Data.ToShortDateString()}===");
             Console.Write("1. Podaj godzinę początku aktywności (format HH:mm, np. 14:30): ");
-            DateTime wpisanyStart = DateTime.ParseExact(Console.ReadLine(), "HH:mm", null);
+            string wpisanyStartInput = PobierzLinie();
+            if (!DateTime.TryParseExact(wpisanyStartInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyStart))
+            {
+                Console.WriteLine("Błąd: Niepoprawny format godziny początku!");
+                return;
+            }
             DateTime czasStart = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyStart.Hour, wpisanyStart.Minute, 0);
             Console.Write("2. Podaj godzinę końca aktywności (format HH:mm, np. 16:00): ");
-            DateTime wpisanyKoniec = DateTime.ParseExact(Console.ReadLine(), "HH:mm", null);
+            string wpisanyKoniecInput = PobierzLinie();
+            if (!DateTime.TryParseExact(wpisanyKoniecInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyKoniec))
+            {
+                Console.WriteLine("Błąd: Niepoprawny format godziny końca!");
+                return;
+            }
             DateTime czasKoniec = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyKoniec.Hour, wpisanyKoniec.Minute, 0);
 
             if (czasKoniec <= czasStart)
@@ -43,7 +53,7 @@ public class Dzien
             Console.WriteLine("2. Nocleg");
             Console.WriteLine("3. Przejazd");
             Console.Write("Twój wybór (1-3): ");
-            string rodzajWybor = Console.ReadLine();
+            string rodzajWybor = PobierzLinie();
 
             if (rodzajWybor != "1" && rodzajWybor != "2" && rodzajWybor != "3")
             {
@@ -55,7 +65,7 @@ public class Dzien
             while (true)
             {
                 Console.Write("5. Podaj opis aktywności (maksymalnie 15 znaków): ");
-                opis = Console.ReadLine();
+                opis = PobierzLinie();
 
                 if (opis.Length <= 15)
                 {
@@ -64,35 +74,35 @@ public class Dzien
                 Console.WriteLine($"Błąd: Twój opis ma {opis.Length} znaków. Maksymalna dozwolona długość to 15 znaków!");
             }
 
-            Aktywnosc nowaAktywnosc = null;
+            Aktywnosc? nowaAktywnosc = null;
 
             switch (rodzajWybor)
             {
                 case "1": 
                     Console.Write("   Podaj nazwę atrakcji: ");
-                    string nazwaAtrakcji = Console.ReadLine();
+                    string nazwaAtrakcji = PobierzLinie();
                     Console.Write("   Czy biletowane? (tak/nie): ");
-                    bool czyBilet = Console.ReadLine().ToLower() == "tak";
+                    bool czyBilet = PobierzLinie().Equals("tak", StringComparison.OrdinalIgnoreCase);
 
                     nowaAktywnosc = new Atrakcja(czasStart, czasKoniec, opis, nazwaAtrakcji, czyBilet);
                     break;
 
                 case "2": 
                     Console.Write("   Podaj nazwę obiektu: ");
-                    string nazwaObiektu = Console.ReadLine();
+                    string nazwaObiektu = PobierzLinie();
                     Console.Write("   Podaj adres: ");
-                    string adres = Console.ReadLine();
+                    string adres = PobierzLinie();
 
                     nowaAktywnosc = new Nocleg(czasStart, czasKoniec, opis, nazwaObiektu, adres);
                     break;
 
                 case "3":
                     Console.Write("   Podaj środek transportu: ");
-                    string transport = Console.ReadLine();
+                    string transport = PobierzLinie();
                     Console.Write("   Podaj stację początkową: ");
-                    string startStacja = Console.ReadLine();
+                    string startStacja = PobierzLinie();
                     Console.Write("   Podaj stację końcową: ");
-                    string koniecStacja = Console.ReadLine();
+                    string koniecStacja = PobierzLinie();
 
                     nowaAktywnosc = new Przejazd(czasStart, czasKoniec, opis, transport, startStacja, koniecStacja);
                     break;
@@ -123,9 +133,14 @@ public class Dzien
             }
 
             Console.Write("Podaj numer aktywności, którą chcesz zmodyfikować: ");
-            int wybranyId = int.Parse(Console.ReadLine());
+            string wybranyIdInput = PobierzLinie();
+            if (!int.TryParse(wybranyIdInput, out int wybranyId))
+            {
+                Console.WriteLine("Błąd: Musisz podać numer aktywności jako liczbę!");
+                return;
+            }
 
-            Aktywnosc akt = aktywnosci.Find(a => a.id == wybranyId);
+            Aktywnosc? akt = aktywnosci.Find(a => a.id == wybranyId);
 
             if (akt == null)
             {
@@ -139,17 +154,27 @@ public class Dzien
             Console.WriteLine("2. Rodzaj aktywności");
             Console.WriteLine("3. Opis");
             Console.Write("Twój wybór (1-3): ");
-            string coZmienic = Console.ReadLine();
+            string coZmienic = PobierzLinie();
 
             switch (coZmienic)
             {
                 case "1": 
                     Console.Write("Podaj nową godzinę początku (format HH:mm, np. 09:00): ");
-                    DateTime wpisanyStart = DateTime.ParseExact(Console.ReadLine(), "HH:mm", null);
+                    string wpisanyStartNowyInput = PobierzLinie();
+                    if (!DateTime.TryParseExact(wpisanyStartNowyInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyStart))
+                    {
+                        Console.WriteLine("Błąd: Niepoprawny format godziny początku!");
+                        return;
+                    }
                     DateTime nowyStart = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyStart.Hour, wpisanyStart.Minute, 0);
 
                     Console.Write("Podaj nową godzinę końca (format HH:mm, np. 11:30): ");
-                    DateTime wpisanyKoniec = DateTime.ParseExact(Console.ReadLine(), "HH:mm", null);
+                    string wpisanyKoniecNowyInput = PobierzLinie();
+                    if (!DateTime.TryParseExact(wpisanyKoniecNowyInput, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime wpisanyKoniec))
+                    {
+                        Console.WriteLine("Błąd: Niepoprawny format godziny końca!");
+                        return;
+                    }
                     DateTime nowyKoniec = new DateTime(Data.Year, Data.Month, Data.Day, wpisanyKoniec.Hour, wpisanyKoniec.Minute, 0);
 
                     if (nowyKoniec <= nowyStart)
@@ -175,7 +200,7 @@ public class Dzien
                     Console.WriteLine("2. Nocleg");
                     Console.WriteLine("3. Przejazd");
                     Console.Write("Twój wybór (1-3): ");
-                    string nowyRodzaj = Console.ReadLine();
+                    string nowyRodzaj = PobierzLinie();
 
                     if (nowyRodzaj != "1" && nowyRodzaj != "2" && nowyRodzaj != "3")
                     {
@@ -183,7 +208,7 @@ public class Dzien
                         return;
                     }
 
-                    Aktywnosc nowoUtworzona = null;
+                    Aktywnosc? nowoUtworzona = null;
                     DateTime obecnyStart = akt.CzasStart;
                     DateTime obecnyKoniec = akt.CzasKoniec;
                     string obecnyOpis = akt.Opis;
@@ -192,27 +217,27 @@ public class Dzien
                     {
                         case "1":
                             Console.Write("   Podaj nazwę atrakcji: ");
-                            string nazwaAtrakcji = Console.ReadLine();
+                            string nazwaAtrakcji = PobierzLinie();
                             Console.Write("   Czy biletowane? (tak/nie): ");
-                            bool czyBilet = Console.ReadLine().ToLower() == "tak";
+                            bool czyBilet = PobierzLinie().Equals("tak", StringComparison.OrdinalIgnoreCase);
                             nowoUtworzona = new Atrakcja(obecnyStart, obecnyKoniec, obecnyOpis, nazwaAtrakcji, czyBilet);
                             break;
 
                         case "2":
                             Console.Write("   Podaj nazwę obiektu: ");
-                            string nazwaObiektu = Console.ReadLine();
+                            string nazwaObiektu = PobierzLinie();
                             Console.Write("   Podaj adres: ");
-                            string adres = Console.ReadLine();
+                            string adres = PobierzLinie();
                             nowoUtworzona = new Nocleg(obecnyStart, obecnyKoniec, obecnyOpis, nazwaObiektu, adres);
                             break;
 
                         case "3":
                             Console.Write("   Podaj środek transportu: ");
-                            string transport = Console.ReadLine();
+                            string transport = PobierzLinie();
                             Console.Write("   Podaj stację początkową: ");
-                            string startStacja = Console.ReadLine();
+                            string startStacja = PobierzLinie();
                             Console.Write("   Podaj stację końcową: ");
-                            string koniecStacja = Console.ReadLine();
+                            string koniecStacja = PobierzLinie();
                             nowoUtworzona = new Przejazd(obecnyStart, obecnyKoniec, obecnyOpis, transport, startStacja, koniecStacja);
                             break;
                     }
@@ -231,7 +256,7 @@ public class Dzien
                     while (true)
                     {
                         Console.Write("Podaj nowy opis aktywności (maksymalnie 15 znaków): ");
-                        nowyOpis = Console.ReadLine();
+                        nowyOpis = PobierzLinie();
 
                         if (nowyOpis.Length <= 15)
                         {
@@ -267,9 +292,14 @@ public class Dzien
             }
 
             Console.Write("Podaj numer aktywności, którą chcesz usunąć: ");
-            int wybranyId = int.Parse(Console.ReadLine());
+            string wybranyIdInput = PobierzLinie();
+            if (!int.TryParse(wybranyIdInput, out int wybranyId))
+            {
+                Console.WriteLine("Musisz podać liczbę jako numer aktywności!");
+                return;
+            }
 
-            Aktywnosc doUsuniecia = aktywnosci.Find(a => a.id == wybranyId);
+            Aktywnosc? doUsuniecia = aktywnosci.Find(a => a.id == wybranyId);
 
             if (doUsuniecia != null)
             {
@@ -305,6 +335,8 @@ public class Dzien
 
         return false;
     }
+    private string PobierzLinie() => Console.ReadLine()?.Trim() ?? string.Empty;
+
     public void WyswietlWidokDnia()
     {
         Console.WriteLine($"\n=== WIDOK DNIA: {Data.ToShortDateString()} ===");

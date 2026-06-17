@@ -13,7 +13,7 @@ public abstract class Aktywnosc
     [JsonInclude]
     protected DateTime czasKoniec;
     [JsonInclude]
-    protected string opis;
+    protected string opis = string.Empty;
 
     public Aktywnosc() { }
 

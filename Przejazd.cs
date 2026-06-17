@@ -4,11 +4,11 @@ using System.Text.Json.Serialization;
 public class Przejazd : Aktywnosc
 {
     [JsonInclude]
-    private string srodekTransportu;
+    private string srodekTransportu = string.Empty;
     [JsonInclude]
-    private string stacjaPoczatkowa;
+    private string stacjaPoczatkowa = string.Empty;
     [JsonInclude]
-    private string stacjaKoncowa;
+    private string stacjaKoncowa = string.Empty;
 
     public Przejazd() { }
 

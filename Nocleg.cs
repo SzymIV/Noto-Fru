@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 public class Nocleg : Aktywnosc
 {
     [JsonInclude]
-    private string nazwaObiektu;
+    private string nazwaObiektu = string.Empty;
     [JsonInclude]
-    private string adres;
+    private string adres = string.Empty;
 
     public Nocleg() { }
 

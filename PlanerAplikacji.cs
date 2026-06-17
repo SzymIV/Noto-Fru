@@ -24,7 +24,7 @@ public class PlanerAplikacja
             Console.WriteLine("7. Wyjdź");
             Console.Write("Wybierz opcję: ");
 
-            string wybor = Console.ReadLine();
+            string wybor = PobierzLinie();
 
             switch (wybor)
             {
@@ -59,7 +59,7 @@ public class PlanerAplikacja
     private void DodajKalendarz()
     {
         Console.Write("Podaj nazwę kalendarza: ");
-        string nazwa = Console.ReadLine();
+        string nazwa = PobierzLinie();
         Kalendarz nowy = new Kalendarz(nazwa);
         kalendarze.Add(nowy);
         Console.WriteLine("Dodano kalendarz!");
@@ -102,7 +102,7 @@ public class PlanerAplikacja
             return;
         }
 
-        if (numer < 1 || numer > kalendarze.Count)
+        if (!int.TryParse(numerInput, out int numer) || numer < 1 || numer > kalendarze.Count)
         {
             Console.WriteLine("Niepoprawny numer.");
             return;
@@ -129,7 +129,7 @@ public class PlanerAplikacja
             Console.WriteLine("7. Powrót");
             Console.Write("Wybierz opcję: ");
 
-            string wybor = Console.ReadLine();
+            string wybor = PobierzLinie();
 
             switch (wybor)
             {
@@ -194,7 +194,12 @@ public class PlanerAplikacja
         try
         {
             Console.Write("Wybierz numer dnia do usunięcia: ");
-            int numer = int.Parse(Console.ReadLine());
+            string numerInput = PobierzLinie();
+            if (!int.TryParse(numerInput, out int numer))
+            {
+                Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+                return;
+            }
 
             if (kalendarz.UsunDzien(numer))
             {
@@ -261,64 +266,50 @@ public class PlanerAplikacja
 
     private void WyswietlMiesiacWKalendarzu(Kalendarz kalendarz)
     {
-        try
+        Console.Write("Podaj rok: ");
+        string rokInput = PobierzLinie();
+        if (!int.TryParse(rokInput, out int rok))
         {
-            Console.Write("Podaj rok: ");
-            int rok = int.Parse(Console.ReadLine());
-
-            Console.Write("Podaj numer miesiąca (1-12): ");
-            int miesiac = int.Parse(Console.ReadLine());
-
-            if (miesiac < 1 || miesiac > 12)
-            {
-                Console.WriteLine("Błąd: Miesiąc musi być liczbą z przedziału od 1 do 12!");
-                return;
-            }
-
-            kalendarz.PokazWidokMiesiecy(rok, miesiac);
+            Console.WriteLine("Błąd: Niepoprawna wartość roku! Operacja anulowana.");
+            return;
         }
-        catch (FormatException)
+
+        Console.Write("Podaj numer miesiąca (1-12): ");
+        string miesiacInput = PobierzLinie();
+        if (!int.TryParse(miesiacInput, out int miesiac) || miesiac < 1 || miesiac > 12)
         {
-            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby! Operacja anulowana.");
+            Console.WriteLine("Błąd: Miesiąc musi być liczbą z przedziału od 1 do 12!");
+            return;
         }
-        catch (OverflowException)
-        {
-            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
-        }
+
+        kalendarz.PokazWidokMiesiecy(rok, miesiac);
     }
 
     private void WyswietlMiesiac()
     {
-        try
+        Console.Write("Podaj rok: ");
+        string rokInput = PobierzLinie();
+        if (!int.TryParse(rokInput, out int rok))
         {
-            Console.Write("Podaj rok: ");
-            int rok = int.Parse(Console.ReadLine());
-
-            Console.Write("Podaj numer miesiąca (1-12): ");
-            int miesiac = int.Parse(Console.ReadLine());
-
-            if (miesiac < 1 || miesiac > 12)
-            {
-                Console.WriteLine("Brak takiego miesiąca (wybierz 1-12).");
-                return;
-            }
-
-            DateTime wybranaData = new DateTime(rok, miesiac, 1);
-            DateTime poprzedniaData = wybranaData.AddMonths(-1);
-            DateTime nastepnaData = wybranaData.AddMonths(1);
-
-            Kalendarz.RysujKalendarz(poprzedniaData.Year, poprzedniaData.Month);
-            Kalendarz.RysujKalendarz(wybranaData.Year, wybranaData.Month);
-            Kalendarz.RysujKalendarz(nastepnaData.Year, nastepnaData.Month);
+            Console.WriteLine("Błąd: Niepoprawna wartość roku!");
+            return;
         }
-        catch (FormatException)
+
+        Console.Write("Podaj numer miesiąca (1-12): ");
+        string miesiacInput = PobierzLinie();
+        if (!int.TryParse(miesiacInput, out int miesiac) || miesiac < 1 || miesiac > 12)
         {
-            Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+            Console.WriteLine("Brak takiego miesiąca (wybierz 1-12).");
+            return;
         }
-        catch (OverflowException)
-        {
-            Console.WriteLine("Błąd: Wpisana liczba jest za duża lub za mała!");
-        }
+
+        DateTime wybranaData = new DateTime(rok, miesiac, 1);
+        DateTime poprzedniaData = wybranaData.AddMonths(-1);
+        DateTime nastepnaData = wybranaData.AddMonths(1);
+
+        Kalendarz.RysujKalendarz(poprzedniaData.Year, poprzedniaData.Month);
+        Kalendarz.RysujKalendarz(wybranaData.Year, wybranaData.Month);
+        Kalendarz.RysujKalendarz(nastepnaData.Year, nastepnaData.Month);
     }
 
     private void OtworzDzien(Kalendarz kalendarz)
@@ -330,7 +321,12 @@ public class PlanerAplikacja
         try
         {
             Console.Write("\nWybierz numer dnia, aby zaplanować w nim aktywności: ");
-            int numer = int.Parse(Console.ReadLine());
+            string numerInput = PobierzLinie();
+            if (!int.TryParse(numerInput, out int numer))
+            {
+                Console.WriteLine("Błąd: Wprowadzono tekst zamiast liczby!");
+                return;
+            }
 
             Dzien wybranyDzien = kalendarz.PobierzDzien(numer); 
 
@@ -366,7 +362,7 @@ public class PlanerAplikacja
             Console.WriteLine("4. Powrót");
             Console.Write("Wybierz opcję: ");
 
-            string wybor = Console.ReadLine();
+            string wybor = PobierzLinie();
 
             switch (wybor)
             {
@@ -378,6 +374,9 @@ public class PlanerAplikacja
             }
         }
     }
+
+
+    private string PobierzLinie() => Console.ReadLine()?.Trim() ?? string.Empty;
 
     private void ZapiszDoPliku(string sciezka)
     {

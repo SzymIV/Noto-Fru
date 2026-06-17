@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 public class Kalendarz
 {
     [JsonInclude]
-    private string tytulDestynacji;
+    private string tytulDestynacji = string.Empty;
 
     [JsonInclude]
     private List<Dzien> dni = new List<Dzien>();
@@ -54,7 +54,7 @@ public class Kalendarz
         RysujKalendarz(nastepnaData.Year, nastepnaData.Month, this.dni);
     }
 
-    public static void RysujKalendarz(int rok, int miesiac, List<Dzien> listaDni = null)
+    public static void RysujKalendarz(int rok, int miesiac, List<Dzien>? listaDni = null)
     {
         DateTime pierwszyDzien = new DateTime(rok, miesiac, 1);
         int dniWMiesiacu = DateTime.DaysInMonth(rok, miesiac);
@@ -93,12 +93,13 @@ public class Kalendarz
         }
     }
 
-    public Dzien PobierzDzien(int indeks)
-{
-    if (indeks < 1 || indeks > dni.Count)
+    public Dzien? PobierzDzien(int indeks)
     {
-        return null;
+        if (indeks < 1 || indeks > dni.Count)
+        {
+            return null;
+        }
+
+        return dni[indeks - 1];
     }
-    return dni[indeks - 1]; // Zwracamy obiekt dnia (indeksowanie od 0)
-}
 }
