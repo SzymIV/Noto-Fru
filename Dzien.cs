@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Dzien
 {
-    public DateTime Data { get; set; }
+    public DateTime Data { get; set; }/*jhj*/
     private List<Aktywnosc> aktywnosci = new List<Aktywnosc>();
     public Dzien(DateTime data)
     {
