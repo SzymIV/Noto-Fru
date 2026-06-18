@@ -335,7 +335,6 @@ public class Dzien : IComparable<Dzien>
         foreach (var akt in aktywnosci)
         {
             string rodzaj = akt.GetType().Name;
-            if (rodzaj == "Zwiedzanie") rodzaj = "Atrakcja";
             string przedzialCzasowy = $"{akt.CzasStart:HH:mm}-{akt.CzasKoniec:HH:mm}";
             Console.WriteLine($"{akt.id,-3} | {przedzialCzasowy,-17} | {rodzaj,-17} | {akt.Opis}");
         }

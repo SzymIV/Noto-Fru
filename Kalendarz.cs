@@ -24,7 +24,7 @@ public class Kalendarz
 
     public bool UsunDzien(int indeks)
     {
-        if (indeks < 0 || indeks >= dni.Count)
+        if (indeks < 1 || indeks > dni.Count)
         {
             return false;
         }
