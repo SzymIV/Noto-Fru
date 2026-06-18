@@ -93,7 +93,3 @@ PlanerAplikacja
 | **Dawid Żmijewski** | `Kalendarz.cs` — zarządzanie dniami, widok miesięczny |
 
 ---
-
-## Licencja
-
-Projekt edukacyjny — brak licencji komercyjnej.
